@@ -41,8 +41,8 @@ class EmailConsent(models.Model):
     well.
     """
     
-    source = models.ForeignKey(EmailConsentSources)
-    user = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL)
+    source = models.ForeignKey(EmailConsentSources, on_delete=models.CASCADE)
+    user = models.ForeignKey(get_user_model(), blank=True, null=True, on_delete=models.SET_NULL)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
@@ -105,8 +105,8 @@ class EmailOptOut(models.Model):
     data imports. Therefore, we store a unique hash.
     """
 
-    user = models.ForeignKey(get_user_model(), related_name='optouts', on_delete=models.SET_NULL)
-    consent = models.ForeignKey('EmailConsent', blank=True, null=True, related_name='optouts')
+    user = models.ForeignKey(get_user_model(), blank=True, null=True, related_name='optouts', on_delete=models.SET_NULL)
+    consent = models.ForeignKey('EmailConsent', blank=True, null=True, related_name='optouts', on_delete=models.SET_NULL)
     is_everything = models.BooleanField(default=False, editable=False)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
