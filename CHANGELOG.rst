@@ -2,7 +2,7 @@
 History
 =======
 
-0.9 (2021-02-13)
-------------------
+UNRELEASED (2021-02-13)
+-----------------------
 
 * First release -- needs a PyPI project.
