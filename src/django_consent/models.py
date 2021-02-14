@@ -1,4 +1,6 @@
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.management.utils import get_random_secret_key
 from django.db import models
 from django.db.models import F
 from django.utils.translation import gettext_lazy as _
@@ -6,7 +8,7 @@ from django.utils.translation import gettext_lazy as _
 from . import utils
 
 
-class EmailConsentSources(models.Model):
+class ConsentSource(models.Model):
     """
     A consent source always has to be present when adding email addresses. It
     should clearly specify how we imagine that the user opted in.
@@ -40,7 +42,7 @@ class EmailConsent(models.Model):
     well.
     """
 
-    source = models.ForeignKey(EmailConsentSources, on_delete=models.CASCADE)
+    source = models.ForeignKey(ConsentSource, on_delete=models.CASCADE)
     user = models.ForeignKey(
         get_user_model(), blank=True, null=True, on_delete=models.SET_NULL
     )
@@ -63,9 +65,42 @@ class EmailConsent(models.Model):
             .exclude(optouts__email_hash=F("email_hash"))
         )
 
-    def save(self):
+    @classmethod
+    def capture_email_consent(cls, source, email):
+        """
+        Stores consent for a specific email.
+        """
+        User = get_user_model()
+        try:
+            user = User.objects.get(**{User.EMAIL_FIELD: email})
+        except ObjectDoesNotExist:
+            create_kwargs = {
+                User.EMAIL_FIELD: email,
+                "is_active": False,
+            }
+            if User.EMAIL_FIELD != User.USERNAME_FIELD:
+                username = get_random_secret_key()
+                while User.objects.filter(**{User.EMAIL_FIELD: username}).exists():
+                    username = get_random_secret_key()
+                create_kwargs[User.USERNAME_FIELD] = username
+            for field_name in [
+                f for f in User.REQUIRED_FIELDS if f not in create_kwargs
+            ]:
+                # Custom auth models have to implement this method if they want
+                # to create rows with just an email on-the-fly
+                create_kwargs[field_name] = User.get_consent_empty_value(field_name)
+            user = get_user_model().objects.create(**create_kwargs)
+            user.set_unusable_password()
+            user.save()
+        return cls.objects.create(
+            source=source,
+            user=user,
+        )
+
+    def save(self, *args, **kwargs):
         if not self.email_hash and self.user and self.user.email:
             self.email_hash = utils.get_email_hash(self.user.email)
+        return super().save(*args, **kwargs)
 
 
 class EmailCampaign(models.Model):
@@ -81,7 +116,7 @@ class EmailCampaign(models.Model):
     """
 
     name = models.CharField(max_length=255, verbose_name=_("name"))
-    consent = models.ManyToManyField(EmailConsentSources)
+    consent = models.ManyToManyField(ConsentSource)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
@@ -124,8 +159,9 @@ class EmailOptOut(models.Model):
 
     email_hash = models.UUIDField()
 
-    def save(self):
+    def save(self, *args, **kwargs):
         if self.consent_id is None:
             self.is_everything = True
         if not self.email_hash and self.user and self.user.email:
             self.email_hash = utils.get_email_hash(self.user.email)
+        return super().save(*args, **kwargs)
