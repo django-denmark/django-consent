@@ -4,28 +4,21 @@ orbs:
   python: circleci/python@0.2.1
 
 jobs:
-  py36:
+  tox:
     docker:
-    - image: circleci/python:3.6
+    - image: circleci/python:<<parameters.python_version>>
     steps:
       - checkout
-      - run: pip install tox && tox -e py36
-  py37:
-    docker:
-    - image: circleci/python:3.7
-    steps:
-      - checkout
-      - run: pip install tox && tox -e py37
-  py38:
-    docker:
-    - image: circleci/python:3.8
-    steps:
-      - checkout
-      - run: pip install tox && tox -e py38
+      - run: pip install tox && tox -e <<parameters.tox_env>>
 
 workflows:
   main:
     jobs:
-      - py36
-      - py37
-      - py38
+      - tox
+        parameters:
+          - tox_env: py36
+            python_version: 3.6
+          - tox_env: py37
+            python_version: 3.7
+          - tox_env: py38
+            python_version: 3.8
