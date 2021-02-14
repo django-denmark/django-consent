@@ -139,3 +139,11 @@ virtualenv and run this:
   pip install -e '.[develop]'
   # Enables pre-commit
   pre-commit install
+
+
+django-consent 0.2 (2011)
+-------------------------
+
+This project is not a fork of the old django-consent but is a new project when the
+PyPi repo owners gave us permissions to take over. The former package is archived
+here: https://github.com/d0ugal/django-consent
