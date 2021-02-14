@@ -5,7 +5,8 @@ orbs:
 
 jobs:
   tox:
-    description: "Reusable tox job runner"
+    name: "tox-<<parameters.tox_env>>-python-<< parameters.python_version >>"
+    description: "Reusable job for invoking tox"
     parameters:
       tox_env:
         description: "Name of Tox environment to run"
