@@ -5,6 +5,16 @@ orbs:
 
 jobs:
   tox:
+    description: "Reusable tox job runner"
+    parameters:
+      tox_env:
+        description: "Name of Tox environment to run"
+        default: "py38"
+        type: string
+      python_version:
+        description: "Python version string"
+        default: "3.8"
+        type: string
     docker:
     - image: circleci/python:<<parameters.python_version>>
     steps:
@@ -15,10 +25,11 @@ workflows:
   main:
     jobs:
       - tox:
-          parameters:
-          - tox_env: py36
-            python_version: 3.6
-          - tox_env: py37
-            python_version: 3.7
-          - tox_env: py38
-            python_version: 3.8
+          tox_env: "py36"
+          python_version: "3.6"
+      - tox:
+          tox_env: "py37"
+          python_version: "3.7"
+      - tox:
+          tox_env: "py38"
+          python_version: "3.8"
