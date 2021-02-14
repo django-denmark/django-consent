@@ -26,4 +26,6 @@ jobs:
 workflows:
   main:
     jobs:
-      - toxify
+      - py36
+      - py37
+      - py38
