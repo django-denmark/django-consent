@@ -27,30 +27,31 @@ Features
 Usage
 -----
 
-```
-# Enable your Python environment (example)
-workon myproject
-# Installation
-pip install django-consent-temp
-```
+.. code-block:: console
+
+  # Enable your Python environment (example)
+  workon myproject
+  # Installation
+  pip install django-consent-temp
 
 Now go to your Django project's settings and add:
 
-```
-INSTALLED_APPS = [
-    # ...
-    'django_consent',
-]
-```
+.. code-block:: python
+  INSTALLED_APPS = [
+      # ...
+      'django_consent',
+  ]
+
 
 To use unsubscribe views, add this to your project's ``urls.py``:
 
-```
-urlpatterns = [
-    # ...
-    path('consent/', include('django_consent.urls')),
-]
-```
+.. code-block:: python
+
+  urlpatterns = [
+      # ...
+      path('consent/', include('django_consent.urls')),
+  ]
+
 
 Development
 -----------
@@ -58,11 +59,11 @@ Development
 To install an editable version into a project, activate your project's
 virtualenv and run this:
 
-```
-# Installs an editable version of django-consent
-pip install -e .
-# Installs an editable version of django-consent's development requirements
-pip install -e '.[develop]'
-# Enables pre-commit
-pre-commit install
-```
+.. code-block:: python
+
+  # Installs an editable version of django-consent
+  pip install -e .
+  # Installs an editable version of django-consent's development requirements
+  pip install -e '.[develop]'
+  # Enables pre-commit
+  pre-commit install
