@@ -2,13 +2,13 @@ django-consent
 ==============
 
 .. image:: https://img.shields.io/pypi/v/django_consent.svg
-        :target: https://pypi.python.org/pypi/django_consent
+     :target: https://pypi.python.org/pypi/django_consent
 
 .. image:: https://circleci.com/gh/django-denmark/django-consent/tree/main.svg?style=svg
-    :target: https://circleci.com/gh/django-denmark/django-consent/tree/main
+     :target: https://circleci.com/gh/django-denmark/django-consent/tree/main
 
 .. image:: https://codecov.io/gh/django-denmark/django-consent/branch/main/graph/badge.svg?token=0TTUJQOFVW
-    :target: https://codecov.io/gh/django-denmark/django-consent
+     :target: https://codecov.io/gh/django-denmark/django-consent
 
 
 *Manages consent for email communication with GDPR in mind*
@@ -76,7 +76,7 @@ No matter the usage of django-consent, you still need to consider this:
 
 In any implementation, you should consider how you associate personally
 identifiable information. This can be a name, email, IP address, physical
-address and unique combinations (employer + job + department).
+address and unique combinations (i.e. employer+job+department).
 
 In order to design a Django project for privacy, consider the following:
 
@@ -89,10 +89,10 @@ In order to design a Django project for privacy, consider the following:
 * Anonymization:
 
   * When a relation to ``User.id`` has ``null=True`` and is nullified, then
-  remaining data in the model should not identify the person. You should design
-  your models to only allow null values for ``User`` relations when in fact the
-  remaining data in the row and its relations cannot be used to identify the
-  person from your data.
+    remaining data in the model should not identify the person. You should design
+    your models to only allow null values for ``User`` relations when in fact the
+    remaining data in the row and its relations cannot be used to identify the
+    person from your data.
 
 
 Usage
@@ -108,6 +108,7 @@ Usage
 Now go to your Django project's settings and add:
 
 .. code-block:: python
+
   INSTALLED_APPS = [
       # ...
       'django_consent',
