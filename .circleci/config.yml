@@ -14,7 +14,6 @@ jobs:
         description: "Python version string"
         default: "3.8"
         type: string
-    name: "tox-<<parameters.tox_env>>-python-<< parameters.python_version >>"
     description: "Reusable job for invoking tox"
     docker:
     - image: circleci/python:<<parameters.python_version>>
