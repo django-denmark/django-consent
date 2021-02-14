@@ -8,6 +8,10 @@ django-consent
 .. image:: https://circleci.com/gh/django-denmark/django-consent/tree/main.svg?style=svg
     :target: https://circleci.com/gh/django-denmark/django-consent/tree/main
 
+.. image:: https://codecov.io/gh/django-denmark/django-consent/branch/main/graph/badge.svg?token=0TTUJQOFVW
+    :target: https://codecov.io/gh/django-denmark/django-consent
+
+
 *Manages consent for email communication with GDPR in mind*
 
 * An app for Django - ``pip install django-consent-temp`` (hoping to takeover django-consent)
