@@ -14,8 +14,8 @@ jobs:
 workflows:
   main:
     jobs:
-      - tox
-        parameters:
+      - tox:
+          parameters:
           - tox_env: py36
             python_version: 3.6
           - tox_env: py37
