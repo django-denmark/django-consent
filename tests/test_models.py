@@ -43,6 +43,7 @@ def email_consent(base_consent):
             )
 
 
+@pytest.mark.django_db
 def test_base(email_consent):
     """
     This is the most basic of all tests, inheriting some fixtures
