@@ -21,8 +21,7 @@ def get_random_email():
 
 @pytest.fixture
 def base_consent():
-    """Sample pytest fixture.
-
+    """Pytest fixture.
     See more at: http://doc.pytest.org/en/latest/fixture.html
     """
     models.ConsentSource.objects.create(
@@ -33,8 +32,7 @@ def base_consent():
 
 @pytest.fixture
 def email_consent(base_consent):
-    """Sample pytest fixture.
-
+    """Pytest fixture.
     See more at: http://doc.pytest.org/en/latest/fixture.html
     """
     for source in models.ConsentSource.objects.all():
@@ -45,8 +43,18 @@ def email_consent(base_consent):
             )
 
 
-@pytest.mark.django_db
-def test_content(email_consent):
-    """Sample pytest test function with the pytest fixture as an argument."""
+def test_base(email_consent):
+    """
+    This is the most basic of all tests, inheriting some fixtures
+    """
     assert models.ConsentSource.objects.all().count() > 0
     assert models.EmailConsent.objects.all().count() > 0
+
+
+@pytest.mark.django_db
+def test_optout_filters(email_consent):
+    """
+    Opt out some of the emails that have been created and check that they don't
+    figure anywhere
+    """
+    pass
