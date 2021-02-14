@@ -14,7 +14,7 @@ django-consent
 
 *Manages consent for email communication with GDPR in mind*
 
-* An app for Django - ``pip install django-consent-temp`` (hoping to takeover django-consent)
+* An app for Django - ``pip install django-consent``
 * Free software: GNU General Public License v3
 
 
