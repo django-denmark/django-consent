@@ -30,8 +30,19 @@ class ConsentSource(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
+    def get_valid_consent(self):
+        """
+        Returns all current consent (that have not opted out)
+        """
+        return (
+            UserConsent.objects.exclude(user__email_optouts__is_everything=True)
+            .exclude(optouts__user=F("user"))
+            .exclude(optouts__email_hash=F("email_hash"))
+            .filter(source=self)
+        ).distinct()
 
-class EmailConsent(models.Model):
+
+class UserConsent(models.Model):
     """
     Specifies the consent of a user to receive emails and what source the
     consent originated from.
@@ -54,16 +65,6 @@ class EmailConsent(models.Model):
     @property
     def email(self):
         return self.user.email
-
-    def get_valid_consent(self):
-        """
-        Returns all current consent (that have not opted out)
-        """
-        return (
-            EmailConsent.objects.exclude(user__optouts__consent__is_everything=True)
-            .exclude(optouts__user=F("user"))
-            .exclude(optouts__email_hash=F("email_hash"))
-        )
 
     @classmethod
     def capture_email_consent(cls, source, email):
@@ -96,6 +97,16 @@ class EmailConsent(models.Model):
             source=source,
             user=user,
         )
+
+    def optout(self):
+        """
+        Ensures that user is opted out of this consent.
+        """
+        return EmailOptOut.objects.get_or_create(
+            user=self.user,
+            consent=self,
+            is_everything=False,
+        )[0]
 
     def save(self, *args, **kwargs):
         if not self.email_hash and self.user and self.user.email:
@@ -143,11 +154,11 @@ class EmailOptOut(models.Model):
         get_user_model(),
         blank=True,
         null=True,
-        related_name="optouts",
+        related_name="email_optouts",
         on_delete=models.SET_NULL,
     )
     consent = models.ForeignKey(
-        "EmailConsent",
+        "UserConsent",
         blank=True,
         null=True,
         related_name="optouts",

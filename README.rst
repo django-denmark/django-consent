@@ -15,6 +15,8 @@ django-consent
 
 * An app for Django - ``pip install django-consent``
 * Free software: GNU General Public License v3
+* Privacy by Design
+* Privacy by Default
 
 
 Features
@@ -29,25 +31,30 @@ Features
 * Denial of Service: Endpoints do not store for instance infinite amounts of
   opt-outs.
 
-Open questions
---------------
 
-* Can or should consent expire? Currently, we are capturing the creation date of
+Open design questions
+---------------------
+
+Since this is a new project, some questions are still open for discussion.
+This project prefers the simplicity of maximum privacy, but to ensure no
+misunderstandings and openness about decisions, refer to the following.
+
+* **Can or should consent expire?** Currently, we are capturing the creation date of
   a consent, but we are not using expiration dates.
 
-* Would some email addresses qualify as non-individual, and thus require
-  different types of consent? For instance, should company/customer email
+* **Would some email addresses qualify as non-individual, and thus require**
+  **different types of consent?** For instance, should company/customer email
   addresses be stored in a way so that certain consents become optional?
   Currently, all consent is explicit and stored that way.
 
-* Should django-consent also capture purpose and more generic ways of storing
-  private data? Currently, we are only capturing email-related consent.
+* **Should django-consent also capture purpose and more generic ways of storing**
+  **private data?** Currently, we are only capturing email-related consent.
 
-* Do we want to store consent indefinitely? No. If consent is withdrawn, we
+* **Do we want to store consent indefinitely?** No. If consent is withdrawn, we
   should delete the entire consent. A person would have to create an entirely
   new consent.
 
-* Should we store op-outs indefinitely? Partly. In django-consent, we do this
+* **Should we store op-outs indefinitely?** Partly. In django-consent, we do this
   because we want opt-outs to remain in effect. But we store a hash of the email
   such that it we don't keep a record of emails. Experience with Mailchimp and
   similar systems tell us that marketing and other eager types will keep
@@ -55,9 +62,12 @@ Open questions
   opt-out, we can ensure to some degree that mistakes made will not result in
   clearly non-consensual communication.
 
+Issues are welcomed with the tag ``question`` to verify, challenge elaborate or
+add to this list.
 
-Other considerations: Privacy by Design
----------------------------------------
+
+Privacy by Design
+-----------------
 
 Your application needs the ability to easily delete and anonymize data. Not just
 because of GDPR, but because it's the right thing to do.
@@ -93,6 +103,16 @@ In order to design a Django project for privacy, consider the following:
     your models to only allow null values for ``User`` relations when in fact the
     remaining data in the row and its relations cannot be used to identify the
     person from your data.
+
+
+Privacy by Default
+------------------
+
+Consider the following:
+
+* Minimize your data collection. Collect as little as possible for your purpose.
+* Encrypt
+* Backups are not trivial
 
 
 Usage
