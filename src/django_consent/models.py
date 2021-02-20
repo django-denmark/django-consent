@@ -60,6 +60,7 @@ class UserConsent(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
+    email_confirmed = models.BooleanField(default=False)
     email_hash = models.UUIDField()
 
     @property

@@ -5,7 +5,15 @@ It is not used by installed instances of this app.
 """
 from django.urls import include
 from django.urls import path
+from django_consent.views import SignupConfirmationView
+from django_consent.views import SignupView
 
 urlpatterns = [
     path("foo/", include("django_consent.urls")),
+    path("signup/<int:source_id>/", SignupView.as_view(), name="signup"),
+    path(
+        "signup/<int:source_id>/confirmation/",
+        SignupConfirmationView.as_view(),
+        name="signup_confirmation",
+    ),
 ]

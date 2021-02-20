@@ -17,12 +17,15 @@ INSTALLED_APPS = (
     "django_consent",
 )
 
-ROOT_URLCONF = "base_urls"
+ROOT_URLCONF = "tests.urls"
+
 
 TEMPLATES = [
     {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "APP_DIRS": True,
         "DIRS": ["path/to/your/templates"],
-    }
+    },
 ]
 
 MIDDLEWARE = [

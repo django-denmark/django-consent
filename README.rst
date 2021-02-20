@@ -30,6 +30,8 @@ Features
 * Abuse-resistent: Someone cannot mass-unsubscribe or otherwise abuse endpoints.
 * Denial of Service: Endpoints do not store for instance infinite amounts of
   opt-outs.
+* Email confirmation steps built-in: Signing up people via email requires to
+  have the email confirmed.
 
 
 Open design questions
