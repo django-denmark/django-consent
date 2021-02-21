@@ -3,6 +3,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.utils import get_random_secret_key
 from django.db import models
 from django.db.models import F
+from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
 from . import utils
@@ -30,15 +31,22 @@ class ConsentSource(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
+    requires_confirmed_email = models.BooleanField(default=False)
+    requires_active_user = models.BooleanField(default=False)
+
     def get_valid_consent(self):
         """
         Returns all current consent (that have not opted out)
         """
         return (
-            UserConsent.objects.exclude(user__email_optouts__is_everything=True)
+            UserConsent.objects.filter(source=self)
+            .exclude(user__email_optouts__is_everything=True)
             .exclude(optouts__user=F("user"))
             .exclude(optouts__email_hash=F("email_hash"))
-            .filter(source=self)
+            .filter(
+                Q(source__requires_confirmed_email=False) | Q(email_confirmed=True),
+                Q(source__requires_active_user=False) | Q(user__is_active=True),
+            )
         ).distinct()
 
 
@@ -60,6 +68,7 @@ class UserConsent(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
+    email_confirmation_requested = models.DateTimeField(null=True, blank=True)
     email_confirmed = models.BooleanField(default=False)
     email_hash = models.UUIDField()
 
