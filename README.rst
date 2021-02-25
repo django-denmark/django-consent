@@ -117,6 +117,20 @@ Consider the following:
 * Backups are not trivial
 
 
+Legal disclaimer
+----------------
+
+Every individual implementation should do its own legal assessment as necessary.
+
+The GPL v3 license which this is distributed under also applies to the
+documentation and this README:
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+
 Usage
 -----
 
