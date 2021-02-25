@@ -16,4 +16,5 @@ urlpatterns = [
         SignupConfirmationView.as_view(),
         name="signup_confirmation",
     ),
+    path("consent/", include("django_consent.urls")),
 ]

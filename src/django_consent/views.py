@@ -1,10 +1,12 @@
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views.generic.base import TemplateView
+from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView
 
 from . import forms
 from . import models
+from . import utils
 
 
 class SignupView(CreateView):
@@ -48,3 +50,26 @@ class SignupConfirmationView(TemplateView):
     """
 
     template_name = "consent/signup/confirm.html"
+
+
+class UnsubscribeConsentView(DetailView):
+    """
+    Unsubscribes a user from a given consent.
+
+    Requires a valid link
+    """
+
+    model = models.UserConsent
+
+    def get_queryset(self):
+
+        email_hash = self.kwargs.get("email_hash")
+        token = self.kwargs.get("token")
+        consent_id = self.kwargs.get("")
+
+        valid_token = utils.get_unsubscribe_token(email_hash, consent_id)
+
+        if token == valid_token:
+            return models.UserConsent.objects.filter(email_hash=email_hash)
+        else:
+            return models.UserConsent.objects.none()
