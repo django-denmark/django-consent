@@ -60,14 +60,37 @@ class UnsubscribeConsentView(DetailView):
     Requires a valid link
     """
 
-    template_name = "consent/unsubscribe/userconsent.html"
+    template_name = "consent/unsubscribe/done.html"
     model = models.UserConsent
+    context_object_name = "consent"
+
+    def toggle(self, consent):
+        consent.optout()
 
     def get_object(self, queryset=None):
         consent = super().get_object(queryset)
         token = self.kwargs.get("token")
 
         if utils.validate_unsubscribe_token(token, consent):
+            self.toggle(consent)
             return consent
         else:
             raise Http404("This does not work")
+
+    def get_context_data(self, **kwargs):
+        c = super().get_context_data(**kwargs)
+        c["token"] = utils.get_unsubscribe_token(c["consent"])
+        return c
+
+
+class UnsubscribeConsentUndoView(UnsubscribeConsentView):
+    """
+    Unsubscribes a user from a given consent.
+
+    Requires a valid link
+    """
+
+    template_name = "consent/unsubscribe/undo.html"
+
+    def toggle(self, consent):
+        consent.optouts.all().delete()

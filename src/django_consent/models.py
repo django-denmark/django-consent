@@ -125,6 +125,15 @@ class UserConsent(models.Model):
             self.email_hash = utils.get_email_hash(self.user.email)
         return super().save(*args, **kwargs)
 
+    def is_valid(self):
+        """
+        Try to avoid using this - instead, do lookups directly of what you need.
+        """
+        return not (
+            self.optouts.all().exists()
+            or self.user.email_optouts.filter(is_everything=True).exists()
+        )
+
 
 class EmailCampaign(models.Model):
     """

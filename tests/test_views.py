@@ -60,6 +60,28 @@ def test_unsubscribe(client, user_consent, create_user):
     # Test render
     response = client.get(url)
     assert response.status_code == 200
+    assert not models.UserConsent.objects.get(id=consent.id).is_valid()
+
+
+@pytest.mark.django_db
+def test_unsubscribe_undo(client, user_consent, create_user):
+
+    source = models.ConsentSource.objects.all().order_by("?")[0]
+
+    consent = source.consents.order_by("?")[0]
+
+    url = reverse(
+        "consent:unsubscribe_undo",
+        kwargs={
+            "pk": consent.id,
+            "token": utils.get_unsubscribe_token(consent),
+        },
+    )
+
+    # Test render
+    response = client.get(url)
+    assert response.status_code == 200
+    assert models.UserConsent.objects.get(id=consent.id).is_valid()
 
 
 @pytest.mark.django_db
