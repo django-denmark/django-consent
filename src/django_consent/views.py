@@ -53,26 +53,25 @@ class SignupConfirmationView(TemplateView):
     template_name = "consent/signup/confirm.html"
 
 
-class UnsubscribeConsentView(DetailView):
+class UserConsentActionView(DetailView):
     """
-    Unsubscribes a user from a given consent.
+    An abstract view
 
-    Requires a valid link
+    Validates that a token is valid for consent ID + email_hash
     """
 
-    template_name = "consent/unsubscribe/done.html"
     model = models.UserConsent
     context_object_name = "consent"
 
-    def toggle(self, consent):
-        consent.optout()
+    def action(self, consent):
+        raise NotImplementedError("blah")
 
     def get_object(self, queryset=None):
         consent = super().get_object(queryset)
         token = self.kwargs.get("token")
 
         if utils.validate_unsubscribe_token(token, consent):
-            self.toggle(consent)
+            self.action(consent)
             return consent
         else:
             raise Http404("This does not work")
@@ -83,7 +82,37 @@ class UnsubscribeConsentView(DetailView):
         return c
 
 
-class UnsubscribeConsentUndoView(UnsubscribeConsentView):
+class UnsubscribeConsentView(UserConsentActionView):
+    """
+    Unsubscribes a user from a given consent.
+
+    Requires a valid link
+    """
+
+    template_name = "consent/unsubscribe/done.html"
+    model = models.UserConsent
+    context_object_name = "consent"
+
+    def action(self, consent):
+        consent.optout()
+
+    def get_object(self, queryset=None):
+        consent = super().get_object(queryset)
+        token = self.kwargs.get("token")
+
+        if utils.validate_unsubscribe_token(token, consent):
+            self.action(consent)
+            return consent
+        else:
+            raise Http404("This does not work")
+
+    def get_context_data(self, **kwargs):
+        c = super().get_context_data(**kwargs)
+        c["token"] = utils.get_unsubscribe_token(c["consent"])
+        return c
+
+
+class UnsubscribeConsentUndoView(UserConsentActionView):
     """
     Unsubscribes a user from a given consent.
 
@@ -92,5 +121,17 @@ class UnsubscribeConsentUndoView(UnsubscribeConsentView):
 
     template_name = "consent/unsubscribe/undo.html"
 
-    def toggle(self, consent):
+    def action(self, consent):
         consent.optouts.all().delete()
+
+
+class SubscribeConsentConfirmView(UserConsentActionView):
+    """
+    Marks a consent as confirmed, this is important for items that require a
+    confirmed email address.
+    """
+
+    template_name = "consent/subscribe/confirm.html"
+
+    def action(self, consent):
+        consent.confirm()

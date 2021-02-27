@@ -4,6 +4,7 @@ from django.core.management.utils import get_random_secret_key
 from django.db import models
 from django.db.models import F
 from django.db.models import Q
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from . import utils
@@ -79,13 +80,26 @@ class UserConsent(models.Model):
         return self.user.email
 
     @classmethod
-    def capture_email_consent(cls, source, email):
+    def capture_email_consent(cls, source, email, require_confirmation=False):
         """
         Stores consent for a specific email.
+
+        :param: require_confirmation: If set, creating consent for an email
+        address that does not exist, will require the user to confirm their
+        consent.
         """
         User = get_user_model()
+        # Field values for creating the new UserConsent object
+        consent_create_kwargs = {
+            "email_confirmed": not require_confirmation,
+        }
+
         try:
             user = User.objects.get(**{User.EMAIL_FIELD: email})
+            if not user.is_active and require_confirmation:
+                consent_create_kwargs["email_confirmation_requested"] = timezone.now()
+            else:
+                consent_create_kwargs["email_confirmed"] = True
         except ObjectDoesNotExist:
             create_kwargs = {
                 User.EMAIL_FIELD: email,
@@ -105,10 +119,9 @@ class UserConsent(models.Model):
             user = get_user_model().objects.create(**create_kwargs)
             user.set_unusable_password()
             user.save()
-        return cls.objects.create(
-            source=source,
-            user=user,
-        )
+            if require_confirmation:
+                consent_create_kwargs["email_confirmation_requested"] = timezone.now()
+        return cls.objects.create(source=source, user=user, **consent_create_kwargs)
 
     def optout(self):
         """
@@ -120,6 +133,14 @@ class UserConsent(models.Model):
             is_everything=False,
         )[0]
 
+    def confirm(self):
+        """
+        Marks a consent as confirmed. This will not delete any potential optouts
+        already existing.
+        """
+        self.email_confirmed = True
+        self.save()
+
     def save(self, *args, **kwargs):
         if not self.email_hash and self.user and self.user.email:
             self.email_hash = utils.get_email_hash(self.user.email)
@@ -129,7 +150,7 @@ class UserConsent(models.Model):
         """
         Try to avoid using this - instead, do lookups directly of what you need.
         """
-        return not (
+        return self.email_confirmed and not (
             self.optouts.all().exists()
             or self.user.email_optouts.filter(is_everything=True).exists()
         )

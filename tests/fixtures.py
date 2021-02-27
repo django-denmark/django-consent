@@ -41,8 +41,7 @@ def user_consent(base_consent):
         for __ in range(10):
             user_consents.append(
                 models.UserConsent.capture_email_consent(
-                    source=source,
-                    email=get_random_email(),
+                    source, get_random_email(), require_confirmation=False
                 )
             )
 

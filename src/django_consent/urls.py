@@ -8,6 +8,11 @@ app_name = "consent"
 
 urlpatterns = [
     path(
+        "subscribe/<int:pk>/<str:token>/",
+        views.SubscribeConsentConfirmView.as_view(),
+        name="unsubscribe_undo",
+    ),
+    path(
         "unsubscribe/<int:pk>/<str:token>/",
         views.UnsubscribeConsentView.as_view(),
         name="unsubscribe",
