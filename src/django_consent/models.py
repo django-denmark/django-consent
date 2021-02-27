@@ -61,7 +61,9 @@ class UserConsent(models.Model):
     well.
     """
 
-    source = models.ForeignKey(ConsentSource, on_delete=models.CASCADE)
+    source = models.ForeignKey(
+        ConsentSource, on_delete=models.CASCADE, related_name="consents"
+    )
     user = models.ForeignKey(
         get_user_model(), blank=True, null=True, on_delete=models.SET_NULL
     )

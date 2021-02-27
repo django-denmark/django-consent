@@ -1,3 +1,4 @@
+from django.http.response import Http404
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views.generic.base import TemplateView
@@ -59,17 +60,14 @@ class UnsubscribeConsentView(DetailView):
     Requires a valid link
     """
 
+    template_name = "consent/unsubscribe/userconsent.html"
     model = models.UserConsent
 
-    def get_queryset(self):
-
-        email_hash = self.kwargs.get("email_hash")
+    def get_object(self, queryset=None):
+        consent = super().get_object(queryset)
         token = self.kwargs.get("token")
-        consent_id = self.kwargs.get("")
 
-        valid_token = utils.get_unsubscribe_token(email_hash, consent_id)
-
-        if token == valid_token:
-            return models.UserConsent.objects.filter(email_hash=email_hash)
+        if utils.validate_unsubscribe_token(token, consent):
+            return consent
         else:
-            return models.UserConsent.objects.none()
+            raise Http404("This does not work")
