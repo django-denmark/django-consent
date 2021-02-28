@@ -22,7 +22,7 @@ class SignupView(CreateView):
 
     model = models.UserConsent
     form_class = forms.EmailConsentForm
-    template_name = "consent/signup/create.html"
+    template_name = "consent/user/create.html"
 
     def dispatch(self, request, *args, **kwargs):
         self.consent_source = get_object_or_404(
@@ -50,7 +50,7 @@ class SignupConfirmationView(TemplateView):
         path("signup/<int:source_id>/confirmation/", SignupConfirmationView.as_view()),
     """
 
-    template_name = "consent/signup/confirm.html"
+    template_name = "consent/user/confirm.html"
 
 
 class UserConsentActionView(DetailView):
@@ -89,7 +89,7 @@ class UnsubscribeConsentView(UserConsentActionView):
     Requires a valid link
     """
 
-    template_name = "consent/unsubscribe/done.html"
+    template_name = "consent/user/unsubscribe/done.html"
     model = models.UserConsent
     context_object_name = "consent"
 
@@ -104,7 +104,7 @@ class UnsubscribeConsentUndoView(UserConsentActionView):
     Requires a valid link
     """
 
-    template_name = "consent/unsubscribe/undo.html"
+    template_name = "consent/user/unsubscribe/undo.html"
 
     def action(self, consent):
         consent.optouts.all().delete()
@@ -116,7 +116,7 @@ class SubscribeConsentConfirmView(UserConsentActionView):
     confirmed email address.
     """
 
-    template_name = "consent/subscribe/confirm.html"
+    template_name = "consent/user/confirm.html"
 
     def action(self, consent):
         consent.confirm()

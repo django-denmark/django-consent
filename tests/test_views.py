@@ -37,6 +37,20 @@ def test_signup(client, user_consent):
 
 
 @pytest.mark.django_db
+def test_signup_confirmation(client, user_consent):
+    """
+    Tests that the confirmation works after adding a new user, i.e. the page
+    that says "please confirm your email".
+    """
+    source = models.ConsentSource.objects.all().order_by("?")[0]
+    url = reverse("signup_confirmation", kwargs={"source_id": source.id})
+
+    response = client.get(url)
+
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
 def test_signup_active_user(client, user_consent, create_user):
 
     source = models.ConsentSource.objects.all().order_by("?")[0]
@@ -143,3 +157,26 @@ def test_unsubscribe_invalid(client, user_consent, create_user):
     response = client.get(url)
 
     assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_consent_confirm(client, user_consent, create_user):
+    """Test that an unconfirmed consent is confirmed"""
+
+    source = models.ConsentSource.objects.all().order_by("?")[0]
+
+    consent = source.consents.filter(email_confirmed=False).order_by("?")[0]
+
+    url = reverse(
+        "consent:consent_confirm",
+        kwargs={
+            "pk": consent.id,
+            "token": utils.get_unsubscribe_token(consent),
+        },
+    )
+
+    # Test render
+    response = client.get(url)
+
+    assert response.status_code == 200
+    assert models.UserConsent.objects.get(id=consent.id).is_valid()
