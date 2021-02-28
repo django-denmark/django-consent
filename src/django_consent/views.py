@@ -96,21 +96,6 @@ class UnsubscribeConsentView(UserConsentActionView):
     def action(self, consent):
         consent.optout()
 
-    def get_object(self, queryset=None):
-        consent = super().get_object(queryset)
-        token = self.kwargs.get("token")
-
-        if utils.validate_unsubscribe_token(token, consent):
-            self.action(consent)
-            return consent
-        else:
-            raise Http404("This does not work")
-
-    def get_context_data(self, **kwargs):
-        c = super().get_context_data(**kwargs)
-        c["token"] = utils.get_unsubscribe_token(c["consent"])
-        return c
-
 
 class UnsubscribeConsentUndoView(UserConsentActionView):
     """
