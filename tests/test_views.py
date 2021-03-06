@@ -126,6 +126,9 @@ def test_unsubscribe_undo(client, user_consent, create_user):
 
     consent = source.consents.order_by("?")[0]
 
+    # Confirm this consent in case it's unconfirmed
+    consent.confirm()
+
     url = reverse(
         "consent:unsubscribe_undo",
         kwargs={
