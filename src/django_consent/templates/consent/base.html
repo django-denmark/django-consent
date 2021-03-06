@@ -1,0 +1,17 @@
+{# overwrite this in your project #}
+{% load i18n %}
+<html>
+<head>
+<title>{% trans "Manage consent" %}</title>
+</head>
+<body>
+
+<h1>{% trans "Manage consent" %}</h1>
+
+<p>On this site, you can manage settings for your consent.</p>
+
+    {% block consent_content %}
+
+    {% endblock %}
+</body>
+</html>
