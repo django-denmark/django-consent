@@ -50,6 +50,9 @@ class ConsentSource(models.Model):
             )
         ).distinct()
 
+    def __str__(self):
+        return self.source_name
+
 
 class UserConsent(models.Model):
     """
@@ -78,6 +81,9 @@ class UserConsent(models.Model):
     @property
     def email(self):
         return self.user.email
+
+    def __str__(self):
+        return "{} agrees to {}".format(self.email, self.source.source_name)
 
     @classmethod
     def capture_email_consent(cls, source, email, require_confirmation=False):

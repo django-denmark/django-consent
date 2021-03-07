@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block demo_content %}
+
+<h1>Sign up for {{ consent_source.source_name }}</h1>
+
+<form method="POST">
+
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button type="submit">Send</button>
+
+</form>
+
+{% endblock %}

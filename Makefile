@@ -83,3 +83,7 @@ dist: clean ## builds source and wheel package
 
 install: clean ## install the package to the active Python's site-packages
 	python setup.py install
+
+demo: ## run the demo project - you need an active virtualenv for this
+	cd demo && python manage.py migrate
+	cd demo && python manage.py runserver
