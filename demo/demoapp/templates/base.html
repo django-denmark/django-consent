@@ -1,0 +1,27 @@
+{% load demotags %}
+<html>
+<head>
+<title>Django Consent demo project</title>
+</head>
+<body>
+
+<header>
+<strong>Django Consent demo project</strong>
+
+<p>This project shows a couple of patterns for using Django Consent that you can use and adapt in your own project.</p>
+
+{% consent_sources as sources %}
+{% for source in sources %}
+<p><a href="{% url "demo:signup" source_id=source.id %}">Consent to {{ source.source_name }}</a></p>
+{% endfor %}
+</header>
+
+<article>
+{% block demo_content %}
+
+{% endblock %}
+</article>
+
+
+</body>
+</html>
