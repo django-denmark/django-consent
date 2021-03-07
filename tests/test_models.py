@@ -12,6 +12,9 @@ def test_base(user_consent):
     assert models.ConsentSource.objects.all().count() > 0
     assert models.UserConsent.objects.all().count() > 0
 
+    assert str(models.ConsentSource.objects.all()[0])
+    assert str(models.UserConsent.objects.all()[0])
+
 
 @pytest.mark.django_db
 def test_optout_filters(user_consent):
