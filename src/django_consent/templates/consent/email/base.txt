@@ -1,0 +1,8 @@
+{% load i18n %}{% block intro %}{% blocktrans with user.get_full_name as name %}Dear {{ name }},{% endblocktrans %}{% endblock %}
+
+{% block body %}{% endblock %}
+
+{% block signature %}{% trans "With kind regards," %}
+
+{{ site_name }}
+{{ protocol }}://{{ domain }}{% endblock %}
