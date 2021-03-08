@@ -21,8 +21,11 @@ class BaseEmail(EmailMessage):
             kwargs["to"] = [self.user.email]
             self.context["user"] = self.user
             self.context["recipient_name"] = self.user.get_full_name()
-        else:
-            self.context["recipient_name"] = kwargs.pop("recipient_name", None)
+
+        # Overwrite if recipient_name is set
+        self.context["recipient_name"] = kwargs.pop(
+            "recipient_name", self.context.get("recipient_name", None)
+        )
 
         super(BaseEmail, self).__init__(*args, **kwargs)
         self.request = request

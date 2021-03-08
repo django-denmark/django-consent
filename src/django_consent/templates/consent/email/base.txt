@@ -1,4 +1,4 @@
-{% load i18n %}{% block intro %}{% blocktrans with user.get_full_name as name %}Dear {{ name }},{% endblocktrans %}{% endblock %}
+{% load i18n %}{% block intro %}{% blocktrans %}Dear {{ recipient_name }},{% endblocktrans %}{% endblock %}
 
 {% block body %}{% endblock %}
 
