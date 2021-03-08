@@ -177,6 +177,32 @@ virtualenv and run this:
   pre-commit install
 
 
+Demo project
+------------
+
+We ship a demo project for development and example code purposes.
+You'll find it in the ``demo/`` folder of this repository.
+
+.. code-block:: python
+
+  # Choose your way of creating a virtualenv, in this case with virtualenvwrapper
+  mkvirtualenv -p python3 demo
+  # Activate the virtualenv
+  workon demo
+  # Go to the demo/ folder
+  cd demo/
+  # Create database
+  python manage.py migrate
+  # Create a superuser
+  python manage.py createsuperuser
+  # Start the dev server
+  python manage.py runserver
+  # Go to the admin and create a consent object
+  xdg-open http://127.0.0.1:8000/admin/django_consent/consentsource/
+  # After that, go to this page and you can see a sign up
+  xdg-open http://127.0.0.1:8000/
+
+
 django-consent 0.2 (2011)
 -------------------------
 
