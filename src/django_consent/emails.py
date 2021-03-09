@@ -14,9 +14,10 @@ class BaseEmail(EmailMessage):
     template = "consent/email/base.txt"
     subject_template = "consent/email/base_subject.txt"
 
-    def __init__(self, request, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         self.context = kwargs.pop("context", {})
         self.user = kwargs.pop("user", None)
+        self.request = kwargs.pop("request", None)
         if self.user:
             kwargs["to"] = [self.user.email]
             self.context["user"] = self.user
@@ -28,7 +29,6 @@ class BaseEmail(EmailMessage):
         )
 
         super(BaseEmail, self).__init__(*args, **kwargs)
-        self.request = request
         self.body = self.get_body()
         self.subject = self.get_subject()
 
@@ -61,3 +61,23 @@ class BaseEmail(EmailMessage):
             messages.error(
                 self.request, _("Not sent, something wrong with the mail server.")
             )
+
+
+class ConfirmationNeededEmail(BaseEmail):
+    """
+    Email sent to confirm the validity of an email in connection to a consent
+    that was given.
+    """
+
+    template = "consent/email/confirmation.txt"
+    subject_template = "consent/email/confirmation_subject.txt"
+
+    def __init__(self, *args, **kwargs):
+
+        self.consent = kwargs.pop("consent")
+        super().__init__(*args, **kwargs)
+
+    def get_context_data(self):
+        c = super().get_context_data()
+        c["consent"] = self.consent
+        return c

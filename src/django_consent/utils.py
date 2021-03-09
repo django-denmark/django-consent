@@ -20,6 +20,17 @@ def get_unsubscribe_token(consent):
     )
 
 
+def get_confirm_token(consent):
+    """
+    Returns a token (for a URL) which can be validated to unsubscribe from the
+    supplied consent object.
+    """
+    return signing.dumps(
+        str(consent.email_hash) + "," + str(consent.id),
+        salt=consent_settings.CONFIRM_SALT,
+    )
+
+
 def validate_unsubscribe_token(token, consent):
     """
     Returns true/false according to whether the token validates for the consent

@@ -160,6 +160,11 @@ To use unsubscribe views, add this to your project's ``urls.py``:
       path('consent/', include('django_consent.urls')),
   ]
 
+If you want to be able to send out confirmation emails or otherwise email your
+users from management scripts and likewise, you need to configure
+``settings.SITE_ID = n`` to ensure that a correct default domain is guessed in
+the absence of an active HTTP request.
+
 
 Development
 -----------

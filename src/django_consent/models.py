@@ -7,6 +7,7 @@ from django.db.models import Q
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
+from . import emails
 from . import utils
 
 
@@ -81,6 +82,18 @@ class UserConsent(models.Model):
     @property
     def email(self):
         return self.user.email
+
+    def email_confirmation(self, request=None):
+        """
+        Sends a confirmation email if necessary
+        """
+        if not self.email_confirmed:
+            email = emails.ConfirmationNeededEmail(
+                request=request, user=self.user, consent=self
+            )
+            email.send()
+            self.email_confirmation_requested = timezone.now()
+            self.save()
 
     def __str__(self):
         return "{} agrees to {}".format(self.email, self.source.source_name)
@@ -160,6 +173,10 @@ class UserConsent(models.Model):
             self.optouts.all().exists()
             or self.user.email_optouts.filter(is_everything=True).exists()
         )
+
+    @property
+    def confirm_token(self):
+        return utils.get_confirm_token(self)
 
 
 class EmailCampaign(models.Model):

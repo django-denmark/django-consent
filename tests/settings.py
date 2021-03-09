@@ -41,3 +41,5 @@ MIDDLEWARE = [
 SECRET_KEY = "this is a test"
 
 EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
+
+SITE_ID = 1

@@ -36,7 +36,7 @@ def test_base(user_consent, rf):
     # from django RequestFactory generates testserver
     Site.objects.all().update(domain=request.get_host())
     user = models.UserConsent.objects.all().order_by("?")[0].user
-    email = emails.BaseEmail(request, user=user)
+    email = emails.BaseEmail(request=request, user=user)
     email.send()
     assert len(mail.outbox) == 1
     assert mail.outbox[0].subject == "Django Consent"
@@ -48,7 +48,15 @@ def test_base(user_consent, rf):
     email.send_with_feedback()
     assert len(mail.outbox) == 2  # No increment expected
 
-    email = emails.BaseEmail(request, user=user, recipient_name="test person")
+    email = emails.BaseEmail(request=request, user=user, recipient_name="test person")
     email.send()
     assert len(mail.outbox) == 3
     assert "test person" in mail.outbox[-1].body
+
+
+@pytest.mark.django_db
+def test_confirm(user_consent):
+    consent = models.UserConsent.objects.filter(email_confirmed=False).order_by("?")[0]
+    consent.email_confirmation(request=None)
+    assert len(mail.outbox) == 1
+    assert "Your confirmation is needed" in mail.outbox[-1].subject
