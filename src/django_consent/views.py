@@ -41,6 +41,12 @@ class SignupView(CreateView):
         c["consent_source"] = self.consent_source
         return c
 
+    def form_valid(self, form):
+        ret_value = super().form_valid(form)
+        consent = self.object
+        consent.email_confirmation(request=self.request)
+        return ret_value
+
     def get_success_url(self):
         return reverse(
             "signup_confirmation", kwargs={"source_id": self.consent_source.id}

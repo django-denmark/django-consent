@@ -1,0 +1,60 @@
+body, html {
+    font-family: monospace;
+    margin: 0;
+    padding: 0;
+    font-size: 120%;
+}
+
+header, article, footer {
+    margin: 0 auto;
+}
+
+header {
+    background-color: #5500ab;
+    color: #fff;
+}
+
+.container {
+    margin: 0 auto;
+    max-width: 800px;
+    padding: 20px;
+}
+
+a, a:visited, a:active {
+    color: #fff;
+}
+
+td, th {
+    padding: 10px 0;
+}
+th {
+    text-align: left;
+    line-height: 40px;
+    vertical-align: top;
+    padding-right: 20px;
+}
+
+
+td input,
+td textarea {
+    width: 300px;
+}
+
+input[type=checkbox]
+{
+    width: auto;
+    margin-bottom: 5px;
+}
+
+input, textarea, select {
+    font-family: monospace;
+    font-size: 120%;
+    padding: 5px;
+}
+
+code {
+    border: 1px solid #ccc;
+    padding: 3px;
+    font-size: 80%;
+    background-color: #f8f8f8;
+}

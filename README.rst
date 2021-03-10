@@ -64,6 +64,14 @@ misunderstandings and openness about decisions, refer to the following.
   opt-out, we can ensure to some degree that mistakes made will not result in
   clearly non-consensual communication.
 
+* **What if we edit consent definitions?** Well, apart from being fraudulent,
+  it's hard to guard people from changing consent. If you change something of
+  real meaning, you should ask for consent again. But this project doesn't seek
+  to support the dark pattern of companies continuously updating their consent
+  and telling users that "by continuing to use this service, you consent to the
+  below thousand lines of crap you don't have time to read".
+
+
 Issues are welcomed with the tag ``question`` to verify, challenge elaborate or
 add to this list.
 

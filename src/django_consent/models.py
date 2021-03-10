@@ -8,6 +8,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from . import emails
+from . import settings as consent_settings
 from . import utils
 
 
@@ -176,7 +177,7 @@ class UserConsent(models.Model):
 
     @property
     def confirm_token(self):
-        return utils.get_confirm_token(self)
+        return utils.get_consent_token(self, salt=consent_settings.CONFIRM_SALT)
 
 
 class EmailCampaign(models.Model):
