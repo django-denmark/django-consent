@@ -7,6 +7,7 @@ from django.views.generic.edit import CreateView
 
 from . import forms
 from . import models
+from . import settings as consent_settings
 from . import utils
 
 
@@ -67,6 +68,7 @@ class UserConsentActionView(DetailView):
 
     model = models.UserConsent
     context_object_name = "consent"
+    token_salt = consent_settings.UNSUBSCRIBE_SALT
 
     def action(self, consent):
         raise NotImplementedError("blah")
@@ -75,7 +77,7 @@ class UserConsentActionView(DetailView):
         consent = super().get_object(queryset)
         token = self.kwargs.get("token")
 
-        if utils.validate_unsubscribe_token(token, consent):
+        if utils.validate_token(token, consent, salt=self.token_salt):
             self.action(consent)
             return consent
         else:
@@ -83,7 +85,7 @@ class UserConsentActionView(DetailView):
 
     def get_context_data(self, **kwargs):
         c = super().get_context_data(**kwargs)
-        c["token"] = utils.get_unsubscribe_token(c["consent"])
+        c["token"] = utils.get_consent_token(c["consent"], salt=self.token_salt)
         return c
 
 
@@ -122,6 +124,7 @@ class SubscribeConsentConfirmView(UserConsentActionView):
     """
 
     template_name = "consent/user/confirm.html"
+    token_salt = consent_settings.CONFIRM_SALT
 
     def action(self, consent):
         consent.confirm()

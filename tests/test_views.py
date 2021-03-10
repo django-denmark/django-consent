@@ -2,6 +2,7 @@ import pytest
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django_consent import models
+from django_consent import settings as consent_settings
 from django_consent import utils
 
 from .fixtures import get_random_email
@@ -109,7 +110,9 @@ def test_unsubscribe(client, user_consent, create_user):
         "consent:unsubscribe",
         kwargs={
             "pk": consent.id,
-            "token": utils.get_unsubscribe_token(consent),
+            "token": utils.get_consent_token(
+                consent, salt=consent_settings.UNSUBSCRIBE_SALT
+            ),
         },
     )
 
@@ -133,7 +136,9 @@ def test_unsubscribe_undo(client, user_consent, create_user):
         "consent:unsubscribe_undo",
         kwargs={
             "pk": consent.id,
-            "token": utils.get_unsubscribe_token(consent),
+            "token": utils.get_consent_token(
+                consent, salt=consent_settings.UNSUBSCRIBE_SALT
+            ),
         },
     )
 
@@ -174,7 +179,9 @@ def test_consent_confirm(client, user_consent, create_user):
         "consent:consent_confirm",
         kwargs={
             "pk": consent.id,
-            "token": utils.get_unsubscribe_token(consent),
+            "token": utils.get_consent_token(
+                consent, salt=consent_settings.CONFIRM_SALT
+            ),
         },
     )
 
