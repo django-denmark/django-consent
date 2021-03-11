@@ -7,10 +7,11 @@ from django.views.generic.edit import CreateView
 
 from . import forms
 from . import models
+from . import settings as consent_settings
 from . import utils
 
 
-class SignupView(CreateView):
+class ConsentCreateView(CreateView):
     """
     The view isn't part of urls.py but you can add it to your own project's
     url configuration if you want to use it.
@@ -40,22 +41,20 @@ class SignupView(CreateView):
         c["consent_source"] = self.consent_source
         return c
 
+    def form_valid(self, form):
+        ret_value = super().form_valid(form)
+        consent = self.object
+        consent.email_confirmation(request=self.request)
+        return ret_value
+
     def get_success_url(self):
+        """
+        This requires a project with a urlconf specifying a view with the name
+        'signup_confirmation'.
+        """
         return reverse(
             "signup_confirmation", kwargs={"source_id": self.consent_source.id}
         )
-
-
-class SignupConfirmationView(TemplateView):
-    """
-    Tells the user to check their inbox after a successful signup.
-
-    To mount it, add a source_id kwarg, for instance::
-
-        path("signup/<int:source_id>/confirmation/", SignupConfirmationView.as_view()),
-    """
-
-    template_name = "consent/user/confirm.html"
 
 
 class UserConsentActionView(DetailView):
@@ -67,6 +66,7 @@ class UserConsentActionView(DetailView):
 
     model = models.UserConsent
     context_object_name = "consent"
+    token_salt = consent_settings.UNSUBSCRIBE_SALT
 
     def action(self, consent):
         raise NotImplementedError("blah")
@@ -75,7 +75,7 @@ class UserConsentActionView(DetailView):
         consent = super().get_object(queryset)
         token = self.kwargs.get("token")
 
-        if utils.validate_unsubscribe_token(token, consent):
+        if utils.validate_token(token, consent, salt=self.token_salt):
             self.action(consent)
             return consent
         else:
@@ -83,15 +83,16 @@ class UserConsentActionView(DetailView):
 
     def get_context_data(self, **kwargs):
         c = super().get_context_data(**kwargs)
-        c["token"] = utils.get_unsubscribe_token(c["consent"])
+        c["token"] = utils.get_consent_token(c["consent"], salt=self.token_salt)
         return c
 
 
-class UnsubscribeConsentView(UserConsentActionView):
+class ConsentWithdrawView(UserConsentActionView):
     """
-    Unsubscribes a user from a given consent.
+    Withdraws a consent. In the case of a newsletter, it unsubscribes a user
+    from receiving the newsletter.
 
-    Requires a valid link
+    Requires a valid link with a token.
     """
 
     template_name = "consent/user/unsubscribe/done.html"
@@ -102,9 +103,10 @@ class UnsubscribeConsentView(UserConsentActionView):
         consent.optout()
 
 
-class UnsubscribeConsentUndoView(UserConsentActionView):
+class ConsentWithdrawUndoView(UserConsentActionView):
     """
-    Unsubscribes a user from a given consent.
+    This is related to undoing withdrawal of consent in case that the user
+    clicked the wrong link.
 
     Requires a valid link
     """
@@ -115,13 +117,22 @@ class UnsubscribeConsentUndoView(UserConsentActionView):
         consent.optouts.all().delete()
 
 
-class SubscribeConsentConfirmView(UserConsentActionView):
+class ConsentConfirmationReceiveView(UserConsentActionView):
     """
     Marks a consent as confirmed, this is important for items that require a
     confirmed email address.
     """
 
-    template_name = "consent/user/confirm.html"
+    template_name = "consent/user/confirmation_received.html"
+    token_salt = consent_settings.CONFIRM_SALT
 
     def action(self, consent):
         consent.confirm()
+
+
+class ConsentConfirmationSentView(TemplateView):
+    """
+    Informs a user that their confirmation has been sent
+    """
+
+    template_name = "consent/user/confirmation_sent.html"

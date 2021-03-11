@@ -1,9 +1,0 @@
-{% blocktrans %}Dear {{ name }},
-
-Someone, hopefully you, have consented to the following via our website:
-
-{{ consent_description }}
-
-To confirm that it is really you, please click this link:
-
-{{ confirm_link }}

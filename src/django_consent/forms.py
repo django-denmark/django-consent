@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.translation import gettext_lazy as _
 
 from . import models
 
@@ -16,6 +17,7 @@ class EmailConsentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.consent_source = kwargs.pop("consent_source")
         super().__init__(*args, **kwargs)
+        self.fields["consent_text"].initial = self.consent_source.definition
 
     email = forms.EmailField()
 
@@ -23,7 +25,9 @@ class EmailConsentForm(forms.ModelForm):
         widget=forms.Textarea(attrs={"disabled": True}), required=False
     )
 
-    confirmation = forms.BooleanField(required=True)
+    confirmation = forms.BooleanField(
+        required=True, help_text=_("I consent to the above")
+    )
 
     def save(self, commit=True):
         if not commit:

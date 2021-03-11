@@ -1,14 +1,14 @@
 from django.urls.base import reverse
 from django.views.generic.base import TemplateView
-from django_consent.views import SignupConfirmationView
-from django_consent.views import SignupView
+from django_consent.views import ConsentConfirmationSentView
+from django_consent.views import ConsentCreateView
 
 
 class Index(TemplateView):
     template_name = "base.html"
 
 
-class SignupView(SignupView):
+class ConsentCreateView(ConsentCreateView):
     template_name = "signup.html"
 
     def get_success_url(self):
@@ -17,5 +17,5 @@ class SignupView(SignupView):
         )
 
 
-class SignupConfirmationView(SignupConfirmationView):
+class ConsentConfirmationSentView(ConsentConfirmationSentView):
     pass

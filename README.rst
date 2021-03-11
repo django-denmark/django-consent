@@ -64,6 +64,15 @@ misunderstandings and openness about decisions, refer to the following.
   opt-out, we can ensure to some degree that mistakes made will not result in
   clearly non-consensual communication.
 
+* **What if we edit consent definitions?** This application is set up to send a
+  copy of what the user consented to via email. If you later change something of
+  real meaning in your own copy, you should ask for consent again. So ideally,
+  you would create a new consent object in the database. This project doesn't
+  seek to support the dark pattern of companies continuously updating their
+  consent and telling users that "by continuing to use this service, you consent
+  to the below thousand lines of legal lingo that you don't have time to read".
+
+
 Issues are welcomed with the tag ``question`` to verify, challenge elaborate or
 add to this list.
 
@@ -159,6 +168,11 @@ To use unsubscribe views, add this to your project's ``urls.py``:
       # ...
       path('consent/', include('django_consent.urls')),
   ]
+
+If you want to be able to send out confirmation emails or otherwise email your
+users from management scripts and likewise, you need to configure
+``settings.SITE_ID = n`` to ensure that a correct default domain is guessed in
+the absence of an active HTTP request.
 
 
 Development

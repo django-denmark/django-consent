@@ -1,11 +1,14 @@
-{% load demotags %}
+{% load demotags static %}
 <html>
 <head>
 <title>Django Consent demo project</title>
+    <link rel="stylesheet" href="{% static "css/demo.css" %}" type="text/css">
+
 </head>
 <body>
 
 <header>
+<div class="container">
 <strong>Django Consent demo project</strong>
 
 <p>This project shows a couple of patterns for using Django Consent that you can use and adapt in your own project.</p>
@@ -14,12 +17,15 @@
 {% for source in sources %}
 <p><a href="{% url "demo:signup" source_id=source.id %}">Consent to {{ source.source_name }}</a></p>
 {% endfor %}
+</div>
 </header>
 
 <article>
+<div class="container">
 {% block demo_content %}
 
 {% endblock %}
+</div>
 </article>
 
 

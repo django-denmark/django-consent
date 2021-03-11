@@ -1,0 +1,11 @@
+{% extends "consent/email/base.txt" %}
+{% load i18n %}
+
+{% block body %}{% url "consent:consent_confirm" pk=consent.id token=consent.confirm_token as confirm_url %}{% blocktrans with consent.definition as consent %}Someone, hopefully you, has consented to the following via our website:
+
+{{ consent }}
+
+To confirm that it is really you, please click this link:{% endblocktrans %}
+
+{{ protocol }}://{{ domain }}{{ confirm_url }}
+{% endblock %}

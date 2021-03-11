@@ -4,13 +4,23 @@
 
 <h1>Sign up for {{ consent_source.source_name }}</h1>
 
+<p>
+The below form is an example of inheriting from <code>ConsentCreateView</code> which
+uses the <code>EmailConsentForm</code>. In your own application, you can make
+similar patterns and it's encouraged that you extend one of these two classes.
+</p>
+
 <form method="POST">
 
     {% csrf_token %}
 
-    {{ form.as_p }}
+    <table>
+    {{ form.as_table }}
+    </table>
 
+    <p>
     <button type="submit">Send</button>
+    </p>
 
 </form>
 

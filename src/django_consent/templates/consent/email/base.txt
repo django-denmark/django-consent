@@ -1,0 +1,8 @@
+{% load i18n %}{% block intro %}{% blocktrans with recipient_name|default:_("user") as name %}Dear {{ name }},{% endblocktrans %}{% endblock %}
+
+{% block body %}{% endblock %}
+
+{% block signature %}{% trans "With kind regards," %}
+
+{{ site_name }}
+{{ protocol }}://{{ domain }}{% endblock %}
