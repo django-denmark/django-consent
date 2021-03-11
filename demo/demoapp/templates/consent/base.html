@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+
+{% comment %}
+This part of the demo shows how you can overwrite consent/base.html in order to
+have your own main template apply to django-consent's built-in templates.
+
+Simply place the consent_content block in the appropriate location.
+{% endcomment %}
+
+{% block demo_content %}
+    {% block consent_content %}
+
+    {% endblock %}
+{% endblock %}
