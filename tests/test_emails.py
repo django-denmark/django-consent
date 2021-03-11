@@ -3,6 +3,7 @@ from django.contrib.messages.storage.fallback import FallbackStorage
 from django.contrib.sites.models import Site
 from django.core import mail
 from django.core.mail.backends.base import BaseEmailBackend
+from django.urls import reverse
 from django_consent import emails
 from django_consent import models
 
@@ -59,4 +60,17 @@ def test_confirm(user_consent):
     consent = models.UserConsent.objects.filter(email_confirmed=False).order_by("?")[0]
     consent.email_confirmation(request=None)
     assert len(mail.outbox) == 1
+
+    # Assuming only one site exists
+    first_site = Site.objects.all()[0]
+
+    expected_url = "{}{}".format(
+        first_site,
+        reverse(
+            "consent:consent_confirm",
+            kwargs={"pk": consent.pk, "token": consent.confirm_token},
+        ),
+    )
+
     assert "Your confirmation is needed" in mail.outbox[-1].subject
+    assert expected_url in mail.outbox[-1].body
