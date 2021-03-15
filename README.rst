@@ -22,16 +22,15 @@ django-consent
 Features
 --------
 
-* GDPR-friendly models, supporting deletion and anonymization
-* Views for unsubscribing
-* Utility functions for generating unsubscribe links
-* Utility functions for creating consent
-* Form mixins for consent
-* Abuse-resistent: Someone cannot mass-unsubscribe or otherwise abuse endpoints.
+* Models: GDPR-friendly, supporting deletion and anonymization
+* Views: For managing withdrawal of consent from email links
+* Easy utility functions: for creating consent, generating unsubscribe links etc.
+* Form mixins: Create your own forms with consent description and checkbox
+* Abuse-resistent: Uses unique URLs and `django-ratelimit <https://django-ratelimit.readthedocs.io/en/stable/>`__.
 * Denial of Service: Endpoints do not store for instance infinite amounts of
   opt-outs.
-* Email confirmation steps built-in: Signing up people via email requires to
-  have the email confirmed.
+* Email confirmation: Signing up people via email requires to have the email
+  confirmed.
 
 
 Open design questions

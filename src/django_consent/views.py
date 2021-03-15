@@ -1,14 +1,17 @@
 from django.http.response import Http404
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
+from django.utils.decorators import method_decorator
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView
+from ratelimit.decorators import ratelimit
 
 from . import forms
 from . import models
 from . import settings as consent_settings
 from . import utils
+from .settings import RATELIMIT
 
 
 class ConsentCreateView(CreateView):
@@ -25,6 +28,7 @@ class ConsentCreateView(CreateView):
     form_class = forms.EmailConsentForm
     template_name = "consent/user/create.html"
 
+    @method_decorator(ratelimit(key="ip", rate=RATELIMIT))
     def dispatch(self, request, *args, **kwargs):
         self.consent_source = get_object_or_404(
             models.ConsentSource, id=kwargs["source_id"]
@@ -67,6 +71,10 @@ class UserConsentActionView(DetailView):
     model = models.UserConsent
     context_object_name = "consent"
     token_salt = consent_settings.UNSUBSCRIBE_SALT
+
+    @method_decorator(ratelimit(key="ip", rate=RATELIMIT))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
 
     def action(self, consent):
         raise NotImplementedError("blah")
