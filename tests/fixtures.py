@@ -58,6 +58,53 @@ def user_consent(base_consent):
 
 
 @pytest.fixture
+def many_consents():
+    """
+    Generate several consents
+    """
+    sources = {
+        "monthly newsletter": "You agree to receiving a newsletter about our activities every month",
+        "vogon poetry": "You agree that the head bureaucrat can send you their poetry randomly",
+        "messages": "Other members can send you a message",
+    }
+    consents = []
+    for name, description in sources.items():
+        consents.append(
+            models.ConsentSource.objects.create(
+                source_name=name,
+                definition=description,
+            )
+        )
+    return consents
+
+
+@pytest.fixture
+def many_consents_per_user(many_consents):
+    """
+    This fixture creates several consents for random users
+    """
+    user_consents = []
+    for source in models.ConsentSource.objects.all():
+        for __ in range(10):
+            user_consents.append(
+                models.UserConsent.capture_email_consent(
+                    source, get_random_email(), require_confirmation=False
+                )
+            )
+        for __ in range(10):
+            user_consents.append(
+                models.UserConsent.capture_email_consent(
+                    source, get_random_email(), require_confirmation=True
+                )
+            )
+
+    return {
+        "many_consents": many_consents,
+        "user_consents": user_consents,
+    }
+
+
+@pytest.fixture
 def test_password():
     return "strong-test-pass"
 

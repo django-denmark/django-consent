@@ -7,6 +7,11 @@ UNSUBSCRIBE_SALT = getattr(
 )
 
 #: You can harden security by adding a different salt in your project's settings
+UNSUBSCRIBE_ALL_SALT = getattr(
+    settings, "CONSENT_UNSUBSCRIBE_SALT", "django-consent-unsubscribe-all"
+)
+
+#: You can harden security by adding a different salt in your project's settings
 CONFIRM_SALT = getattr(settings, "CONSENT_CONFIRM_SALT", "django-consent-confirm")
 
 #: For more information, `django-ratelimit <https://django-ratelimit.readthedocs.io/en/stable/>`__

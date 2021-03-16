@@ -115,11 +115,21 @@ def test_unsubscribe(client, user_consent, create_user):
             ),
         },
     )
+    url_undo = reverse(
+        "consent:unsubscribe_undo",
+        kwargs={
+            "pk": consent.id,
+            "token": utils.get_consent_token(
+                consent, salt=consent_settings.UNSUBSCRIBE_SALT
+            ),
+        },
+    )
 
     # Test render
     response = client.get(url)
     assert response.status_code == 200
     assert not models.UserConsent.objects.get(id=consent.id).is_valid()
+    assert url_undo in str(response.content)
 
 
 @pytest.mark.django_db
@@ -165,6 +175,65 @@ def test_unsubscribe_invalid(client, user_consent, create_user):
     response = client.get(url)
 
     assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_unsubscribe_all(client, many_consents_per_user, create_user):
+
+    source = models.ConsentSource.objects.all().order_by("?")[0]
+
+    consent = source.consents.order_by("?")[0]
+
+    url = reverse(
+        "consent:unsubscribe_all",
+        kwargs={
+            "pk": consent.id,
+            "token": utils.get_consent_token(
+                consent, salt=consent_settings.UNSUBSCRIBE_ALL_SALT
+            ),
+        },
+    )
+    url_undo = reverse(
+        "consent:unsubscribe_all_undo",
+        kwargs={
+            "pk": consent.id,
+            "token": utils.get_consent_token(
+                consent, salt=consent_settings.UNSUBSCRIBE_ALL_SALT
+            ),
+        },
+    )
+
+    # Test render
+    response = client.get(url)
+    assert response.status_code == 200
+    assert not models.UserConsent.objects.get(id=consent.id).is_valid()
+    assert url_undo in str(response.content)
+
+
+@pytest.mark.django_db
+def test_unsubscribe_all_undo(client, many_consents_per_user, create_user):
+
+    source = models.ConsentSource.objects.all().order_by("?")[0]
+
+    consent = source.consents.order_by("?")[0]
+
+    # Confirm this consent in case it's unconfirmed
+    consent.confirm()
+
+    url = reverse(
+        "consent:unsubscribe_all_undo",
+        kwargs={
+            "pk": consent.id,
+            "token": utils.get_consent_token(
+                consent, salt=consent_settings.UNSUBSCRIBE_ALL_SALT
+            ),
+        },
+    )
+
+    # Test render
+    response = client.get(url)
+    assert response.status_code == 200
+    assert models.UserConsent.objects.get(id=consent.id).is_valid()
 
 
 @pytest.mark.django_db

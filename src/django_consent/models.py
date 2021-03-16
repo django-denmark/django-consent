@@ -80,10 +80,6 @@ class UserConsent(models.Model):
     email_confirmed = models.BooleanField(default=False)
     email_hash = models.UUIDField()
 
-    @property
-    def email(self):
-        return self.user.email
-
     def email_confirmation(self, request=None):
         """
         Sends a confirmation email if necessary
@@ -143,14 +139,14 @@ class UserConsent(models.Model):
                 consent_create_kwargs["email_confirmation_requested"] = timezone.now()
         return cls.objects.create(source=source, user=user, **consent_create_kwargs)
 
-    def optout(self):
+    def optout(self, is_everything=False):
         """
         Ensures that user is opted out of this consent.
         """
         return EmailOptOut.objects.get_or_create(
             user=self.user,
             consent=self,
-            is_everything=False,
+            is_everything=is_everything,
         )[0]
 
     def confirm(self):
@@ -174,6 +170,10 @@ class UserConsent(models.Model):
             self.optouts.all().exists()
             or self.user.email_optouts.filter(is_everything=True).exists()
         )
+
+    @property
+    def email(self):
+        return self.user.email
 
     @property
     def confirm_token(self):

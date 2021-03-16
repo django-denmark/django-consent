@@ -106,6 +106,7 @@ class ConsentWithdrawView(UserConsentActionView):
     template_name = "consent/user/unsubscribe/done.html"
     model = models.UserConsent
     context_object_name = "consent"
+    token_salt = consent_settings.UNSUBSCRIBE_SALT
 
     def action(self, consent):
         consent.optout()
@@ -120,9 +121,45 @@ class ConsentWithdrawUndoView(UserConsentActionView):
     """
 
     template_name = "consent/user/unsubscribe/undo.html"
+    token_salt = consent_settings.UNSUBSCRIBE_SALT
 
     def action(self, consent):
         consent.optouts.all().delete()
+
+
+class ConsentWithdrawAllView(UserConsentActionView):
+    """
+    Withdraws a consent. In the case of a newsletter, it unsubscribes a user
+    from receiving the newsletter.
+
+    Requires a valid link with a token.
+    """
+
+    template_name = "consent/user/unsubscribe_all/done.html"
+    model = models.UserConsent
+    context_object_name = "consent"
+    token_salt = consent_settings.UNSUBSCRIBE_ALL_SALT
+
+    def action(self, consent):
+        consent.optout(is_everything=True)
+
+
+class ConsentWithdrawAllUndoView(UserConsentActionView):
+    """
+    This is related to undoing withdrawal of consent in case that the user
+    clicked the wrong link.
+
+    Requires a valid link
+
+    This only cancels an withdrawal of everything that was related to this
+    particular consent. Another withdrawal can still exist.
+    """
+
+    template_name = "consent/user/unsubscribe_all/undo.html"
+    token_salt = consent_settings.UNSUBSCRIBE_ALL_SALT
+
+    def action(self, consent):
+        consent.optouts.filter(is_everything=True).delete()
 
 
 class ConsentConfirmationReceiveView(UserConsentActionView):
