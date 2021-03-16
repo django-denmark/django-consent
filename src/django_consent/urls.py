@@ -22,4 +22,14 @@ urlpatterns = [
         views.ConsentWithdrawUndoView.as_view(),
         name="unsubscribe_undo",
     ),
+    path(
+        "unsubscribe-all/<int:pk>/<str:token>/",
+        views.ConsentWithdrawAllView.as_view(),
+        name="unsubscribe_all",
+    ),
+    path(
+        "unsubscribe-all/<int:pk>/<str:token>/undo/",
+        views.ConsentWithdrawAllUndoView.as_view(),
+        name="unsubscribe_all_undo",
+    ),
 ]

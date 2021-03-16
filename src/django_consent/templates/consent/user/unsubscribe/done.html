@@ -1,6 +1,6 @@
 {% extends "consent/base.html" %}
 {% block consent_content %}
-<p>Your consent has been withdrawn!</p>
+<p>A consent for <strong>{{ consent.email|default:"unknown/deleted" }}</strong> has been withdrawn!</p>
 
 <a href="{% url "consent:unsubscribe_undo" pk=consent.id token=token %}"></a>
 {% endblock %}
