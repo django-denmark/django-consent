@@ -11,7 +11,11 @@ django-consent
      :target: https://codecov.io/gh/django-denmark/django-consent
 
 
-*Manages consent for email communication with GDPR in mind*
+*Manages consent from the user's perspective and with GDPR in mind*
+
+We can imagine how we would want to handle data as the owners of an organization
+or the developers of a website. But let's instead imagine how we would want our
+own data to handled on a website.
 
 * An app for Django - ``pip install django-consent``
 * Free software: GNU General Public License v3
