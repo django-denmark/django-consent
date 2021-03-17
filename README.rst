@@ -10,6 +10,9 @@ django-consent
 .. image:: https://codecov.io/gh/django-denmark/django-consent/branch/main/graph/badge.svg?token=0TTUJQOFVW
      :target: https://codecov.io/gh/django-denmark/django-consent
 
+.. image:: https://readthedocs.org/projects/django-consent/badge/?version=latest
+     :target: https://django-consent.readthedocs.io/en/latest/?badge=latest
+     :alt: Documentation Status
 
 *Manages consent from the user's perspective and with GDPR in mind*
 
