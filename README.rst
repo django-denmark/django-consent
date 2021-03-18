@@ -4,7 +4,7 @@ django-consent
 .. image:: https://img.shields.io/pypi/v/django_consent.svg
      :target: https://pypi.python.org/pypi/django_consent
 
-.. image:: https://circleci.com/gh/django-denmark/django-consent/tree/main.svg?style=svg
+.. image:: https://circleci.com/gh/django-denmark/django-consent/tree/main.svg?style=shield
      :target: https://circleci.com/gh/django-denmark/django-consent/tree/main
 
 .. image:: https://codecov.io/gh/django-denmark/django-consent/branch/main/graph/badge.svg?token=0TTUJQOFVW
