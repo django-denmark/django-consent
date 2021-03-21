@@ -17,7 +17,7 @@ class EmailConsentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.consent_source = kwargs.pop("consent_source")
         super().__init__(*args, **kwargs)
-        self.fields["consent_text"].initial = self.consent_source.definition
+        self.fields["consent_text"].initial = self.consent_source.definition_translated
 
     email = forms.EmailField()
 

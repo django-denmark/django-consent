@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.utils import get_random_secret_key
@@ -5,6 +6,7 @@ from django.db import models
 from django.db.models import F
 from django.db.models import Q
 from django.utils import timezone
+from django.utils import translation
 from django.utils.translation import gettext_lazy as _
 
 from . import emails
@@ -54,6 +56,57 @@ class ConsentSource(models.Model):
 
     def __str__(self):
         return self.source_name
+
+    @property
+    def definition_translated(self):
+        if settings.USE_I18N:
+            try:
+                return self.translations.get(
+                    language_code=translation.get_language()
+                ).definition
+            except ConsentSourceTranslation.DoesNotExist:
+                return self.definition
+        else:
+            return self.definition
+
+    @property
+    def source_name_translated(self):
+        if settings.USE_I18N:
+            try:
+                return self.translations.get(
+                    language_code=translation.get_language()
+                ).source_name
+            except ConsentSourceTranslation.DoesNotExist:
+                return self.source_name
+        else:
+            return self.source_name
+
+
+class ConsentSourceTranslation(models.Model):
+    """
+    An optional translation. It is used like this in views and emails:
+
+    If a translation of a ConsentSource exists in the active language, then that
+    name and definition of the consent is used. Otherwise, it will fallback
+    to using the name and translation in the ConsentSource.
+
+    If you have a mono-language project, you don't need to use this model at
+    all.
+    """
+
+    consent_source = models.ForeignKey(
+        "ConsentSource", related_name="translations", on_delete=models.CASCADE
+    )
+    language_code = models.CharField(max_length=16, choices=settings.LANGUAGES)
+    source_name = models.CharField(max_length=255)
+    definition = models.TextField()
+
+    class Meta:
+        unique_together = ("language_code", "consent_source")
+        ordering = ("consent_source__source_name", "language_code")
+
+    def __str__(self):
+        return "{} ({})".format(self.consent_source.source_name, self.language_code)
 
 
 class UserConsent(models.Model):
