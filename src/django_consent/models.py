@@ -39,6 +39,17 @@ class ConsentSource(models.Model):
     requires_confirmed_email = models.BooleanField(default=False)
     requires_active_user = models.BooleanField(default=False)
 
+    # Consent can be defined as some integral part of a website, for instance
+    # used for a fixed Newsletter signup form.
+    auto_create_id = models.CharField(
+        max_length=255,
+        null=True,
+        editable=False,
+        help_text=_(
+            "Created by a seeding process, defined by a dictionary settings.CONSENT_SEED. May be edited later."
+        ),
+    )
+
     def get_valid_consent(self):
         """
         Returns all current consent (that have not opted out)
