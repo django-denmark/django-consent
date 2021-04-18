@@ -1,4 +1,5 @@
 # You may need more or less than what's shown here - this is a skeleton:
+from django.utils.translation import gettext_lazy as _
 
 DATABASES = {
     "default": {
@@ -43,3 +44,11 @@ SECRET_KEY = "this is a test"
 EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 
 SITE_ID = 1
+
+USE_I18N = True
+LANGUAGE_CODE = "en-us"
+
+LANGUAGES = [
+    ("en", _("English")),
+    ("hi", _("Hindi")),
+]

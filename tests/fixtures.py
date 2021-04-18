@@ -3,6 +3,7 @@ import string
 import uuid
 
 import pytest
+from django.conf import settings
 from django_consent import models
 
 
@@ -25,10 +26,19 @@ def base_consent():
     """Pytest fixture.
     See more at: http://doc.pytest.org/en/latest/fixture.html
     """
-    return models.ConsentSource.objects.create(
+    source = models.ConsentSource.objects.create(
         source_name="test",
         definition="Testing stuff",
     )
+
+    for language in settings.LANGUAGES:
+        source.translations.create(
+            source_name="test {}".format(language[1]),
+            definition="Testing stuff {}".format(language[1]),
+            language_code=language[0],
+        )
+
+    return source
 
 
 @pytest.fixture
