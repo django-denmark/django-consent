@@ -9,6 +9,8 @@
    :maxdepth: 2
    :caption: Contents:
 
+   consent_types
+
 
 Indices and tables
 ==================
