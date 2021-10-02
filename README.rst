@@ -16,7 +16,7 @@ django-consent
 
 *Manages consent from the user's perspective and with GDPR in mind*
 
-*October 2021: @benjaoming has joined [GovStack](https://www.govstack.global/)'s [working group on Consent Management](https://discourse.govstack.global/t/consent-management/21).*
+*October 2021: @benjaoming has joined `GovStack <https://www.govstack.global/>__`'s `working group on Consent Management <https://discourse.govstack.global/t/consent-management/21>`__.*
 
 We can imagine how we would want to handle data as the owners of an organization
 or the developers of a website. But let's instead imagine how we would want our
