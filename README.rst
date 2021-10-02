@@ -16,6 +16,8 @@ django-consent
 
 *Manages consent from the user's perspective and with GDPR in mind*
 
+*October 2021: @benjaoming has joined [GovStack](https://www.govstack.global/)'s [working group on Consent Management](https://discourse.govstack.global/t/consent-management/21).*
+
 We can imagine how we would want to handle data as the owners of an organization
 or the developers of a website. But let's instead imagine how we would want our
 own data to handled on a website.
@@ -38,6 +40,7 @@ Features
   opt-outs.
 * Email confirmation: Signing up people via email requires to have the email
   confirmed.
+* Email receipts: Informed consent can only exist meaningfully if both parties have a copy
 
 
 Open design questions

@@ -24,10 +24,10 @@ class ConsentSource(models.Model):
 
     Notice that some consent sources may change their meaning over time. For
     instance, someone can sign up as a member and continue to receive certain
-    email updates despite their membership expiring.
+    email updates despite their memberships expiring.
 
     In a different case, the consent may be implicit because the email is
-    mandatory: For instance password reminders, membership confirmations,
+    mandatory: For instance password reminders, memberships confirmations,
     confirmations of website actions etc.
     """
 
