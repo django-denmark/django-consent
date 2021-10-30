@@ -18,14 +18,19 @@ django-consent
 
 **October 2021:** @benjaoming has joined `GovStack <https://www.govstack.global/>`__'s `working group on Consent Management <https://discourse.govstack.global/t/consent-management/21>`__.
 
-*Normally* or conventionally, organizations and developers imagine how to handle data
-from the organizations's or the developer's perspective. We end up with solutions
-to convince/manipulate/coerce users to consent to using their data. This isn't what
-consent should mean. So we need a different model and solution.
+**Currently** (or conventionally), organizations and developers imagine how to handle data
+from the organization's or the developer's perspective. Through quantity-driven and often
+needlessly greedy data collection and useless UIs, we end up with solutions to
+convince/manipulate/coerce users to consent to using their data. The user's consent is
+viewed as a legally required obstacle that's supposed to be clicked away and not actually
+understood. This isn't what consent should mean.
 
-*Ideally*, we should step back and imagine how **we** would want **our own** data to
-be handled. That's the way to identify better models and solutions fo
-*consent management*.
+We need different models and solutions.
+
+**Ideally**, we should step back from our immediate short-term development issues
+and imagine how **we** would want **our own** data to be handled. By assuming the real
+user's perspective, we can identify better models and solutions for *consent management*
+where the *management* part is seen as the user's ability to manage their own consent.
 
 What is this?
 -------------
