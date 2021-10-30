@@ -18,14 +18,23 @@ django-consent
 
 **October 2021:** @benjaoming has joined `GovStack <https://www.govstack.global/>`__'s `working group on Consent Management <https://discourse.govstack.global/t/consent-management/21>`__.
 
-We can imagine how we would want to handle data as the owners of an organization
-or the developers of a website. But let's instead imagine how we would want our
-own data to handled on a website.
+*Normally* or conventionally, organizations and developers imagine how to handle data
+from the organizations's or the developer's perspective. We end up with solutions
+to convince/manipulate/coerce users to consent to using their data. This isn't what
+consent should mean. So we need a different model and solution.
+
+*Ideally*, we should step back and imagine how **we** would want **our own** data to
+be handled. That's the way to identify better models and solutions fo
+*consent management*.
+
+What is this?
+-------------
 
 * An app for Django - ``pip install django-consent``
 * Free software: GNU General Public License v3
 * Privacy by Design
 * Privacy by Default
+* Use-case: Consent-driven communication
 
 
 Features
@@ -41,6 +50,7 @@ Features
 * Email confirmation: Signing up people via email requires to have the email
   confirmed.
 * Email receipts: Informed consent can only exist meaningfully if both parties have a copy
+* Auditability: Actions are tracked
 
 
 Open design questions
