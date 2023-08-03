@@ -16,6 +16,10 @@ django-consent
 
 *Manages consent from the user's perspective and with GDPR in mind*
 
+**August 2023:** Matrix channel added: `#django-consent:data.coop <https://matrix.to/#/#django-consent:data.coop>`__
+
+**May 2023:** GovStack specification for a `Consent Building Block <https://govstack.gitbook.io/bb-consent/>`__ 1.0 is released.
+
 **October 2021:** @benjaoming has joined `GovStack <https://www.govstack.global/>`__'s `working group on Consent Management <https://discourse.govstack.global/t/consent-management/21>`__.
 
 **Currently** (or conventionally), organizations and developers imagine how to handle data
