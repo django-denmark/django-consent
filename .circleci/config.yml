@@ -19,7 +19,14 @@ jobs:
     - image: circleci/python:<<parameters.python_version>>
     steps:
       - checkout
-      - run: pip install tox --upgrade && tox -e <<parameters.tox_env>>
+      - python/install-packages:
+          args: tox
+          pkg-manager: pip
+          pypi-cache: true
+      - run:
+          command: |
+            tox -e <<parameters.tox_env>>
+          name: Test
 
 workflows:
   main:
