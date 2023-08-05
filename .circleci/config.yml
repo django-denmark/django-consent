@@ -16,7 +16,7 @@ jobs:
         type: string
     description: "Reusable job for invoking tox"
     docker:
-    - image: circleci/python:<<parameters.python_version>>
+      - image: cimg/python:<<parameters.python_version>>
     steps:
       - checkout
       - run:
