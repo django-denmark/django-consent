@@ -8,11 +8,11 @@ jobs:
     parameters:
       tox_env:
         description: "Name of Tox environment to run"
-        default: "py38"
+        default: "py10"
         type: string
       python_version:
         description: "Python version string"
-        default: "3.8"
+        default: "3.10"
         type: string
     description: "Reusable job for invoking tox"
     docker:
@@ -31,8 +31,8 @@ workflows:
   main:
     jobs:
       - tox:
-          tox_env: "py38"
-          python_version: "3.8"
-      - tox:
           tox_env: "py310"
           python_version: "3.10"
+      - tox:
+          tox_env: "py311"
+          python_version: "3.11"
