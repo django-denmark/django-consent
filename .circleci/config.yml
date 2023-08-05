@@ -19,10 +19,9 @@ jobs:
     - image: circleci/python:<<parameters.python_version>>
     steps:
       - checkout
-      - python/install-packages:
-          args: tox
-          pkg-manager: pip
-          pypi-cache: true
+      - run:
+          command: |
+            pip install tox
       - run:
           command: |
             tox -e <<parameters.tox_env>>
