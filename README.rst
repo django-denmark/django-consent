@@ -16,7 +16,9 @@ django-consent
 
 *Manages consent from the user's perspective and with GDPR in mind*
 
-**September 2023:** If you're interested in the politics, of consent, you might be interested in reading [The Left Needs To Stop Idolizing The GDPR](https://www.malteengeler.de/2023/09/14/the-left-needs-to-stop-idolizing-the-gdpr/).
+**October 2023:** There are still some incomin architectural changes in the `Consent Building Block <https://govstack.gitbook.io/bb-consent/>`__ 1.1 that we are waiting for.
+
+**September 2023:** If you're interested in the politics, of consent, you might be interested in reading `The Left Needs To Stop Idolizing The GDPR <https://www.malteengeler.de/2023/09/14/the-left-needs-to-stop-idolizing-the-gdpr/>`__.
 
 **August 2023:** Matrix channel added: `#django-consent:data.coop <https://matrix.to/#/#django-consent:data.coop>`__
 
