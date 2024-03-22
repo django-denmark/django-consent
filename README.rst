@@ -18,6 +18,8 @@ django-consent
 
 **March 2024:** I'm (@benjaoming) starting work to rewrite everything that existed here based on a more fundamental understanding of a consent model and lifecycle that we have discussed and developed in `GovStack <https://govstack.gitbook.io/bb-consent/>`__.
 
+**October 2023:** There is a new release of the `GovStack Consent Building Block <https://govstack.gitbook.io/bb-consent/>`__ 1.1.
+
 **September 2023:** If you're interested in the politics, of consent, you might be interested in reading [The Left Needs To Stop Idolizing The GDPR](https://www.malteengeler.de/2023/09/14/the-left-needs-to-stop-idolizing-the-gdpr/).
 
 **August 2023:** Matrix channel added: `#django-consent:data.coop <https://matrix.to/#/#django-consent:data.coop>`__
