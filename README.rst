@@ -45,6 +45,11 @@ What is this?
 * Use-case: Consent-driven communication
 * Easy inclusion other Django models and views
 
+What is this NOT?
+-----------------
+
+Do you want to collect consent based on a cookie or an IP? This is ridiculous and not what this app is about.
+If you are tracking your users before they are even logged in, please don't. We want to obtain consent from an authenticated user that has motivation to user the website and will have an ability to withdraw their consent and audit any actions that it has been used for.
 
 Features
 --------
