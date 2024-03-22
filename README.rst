@@ -16,6 +16,8 @@ django-consent
 
 *Manages consent from the user's perspective and with GDPR in mind*
 
+**March 2024:** I'm (@benjaoming) starting work to rewrite everything that existed here based on a more fundamental understanding of a consent model and lifecycle that we have discussed and developed in `GovStack <https://govstack.gitbook.io/bb-consent/>`__.
+
 **September 2023:** If you're interested in the politics, of consent, you might be interested in reading [The Left Needs To Stop Idolizing The GDPR](https://www.malteengeler.de/2023/09/14/the-left-needs-to-stop-idolizing-the-gdpr/).
 
 **August 2023:** Matrix channel added: `#django-consent:data.coop <https://matrix.to/#/#django-consent:data.coop>`__
@@ -24,19 +26,14 @@ django-consent
 
 **October 2021:** @benjaoming has joined `GovStack <https://www.govstack.global/>`__'s `working group on Consent Management <https://discourse.govstack.global/t/consent-management/21>`__.
 
-**Currently** (or conventionally), organizations and developers imagine how to handle data
-from the organization's or the developer's perspective. Through quantity-driven and often
-needlessly greedy data collection and useless UIs, we end up with solutions to
-convince/manipulate/coerce users to consent to using their data. The user's consent is
-viewed as a legally required obstacle that's supposed to be clicked away and not actually
-understood. This isn't what consent should mean.
+Motivational pitch ✊️
+---------------------
 
-We need different models and solutions.
+**Currently** (or conventionally), organizations and developers imagine how to handle data from the organization's or the developer's perspective. Through quantity-driven and often needlessly greedy data collection and `deceptive UX <https://www.deceptive.design/>`__, we end up with solutions to convince/manipulate/coerce users to consent to using their data. The user's consent is viewed as a legally required obstacle that's supposed to be clicked away and not actually understood. This isn't what consent should mean.
 
-**Ideally**, we should step back from our immediate short-term development issues
-and imagine how **we** would want **our own** data to be handled. By assuming the real
-user's perspective, we can identify better models and solutions for *consent management*
-where the *management* part is seen as the user's ability to manage their own consent.
+**We need different models and solutions.**
+
+**Ideally**, we should step back from our immediate short-term development issues and imagine how **we** would want **our own** data to be handled. By assuming the real user's perspective, we can identify better models and solutions for *consent management* where the *management* part is seen as the user's ability to manage their own consent.
 
 What is this?
 -------------
@@ -46,6 +43,7 @@ What is this?
 * Privacy by Design
 * Privacy by Default
 * Use-case: Consent-driven communication
+* Easy inclusion other Django models and views
 
 
 Features
@@ -53,15 +51,14 @@ Features
 
 * Models: GDPR-friendly, supporting deletion and anonymization
 * Views: For managing withdrawal of consent from email links
+* Signals and webhooks: Consent can be given and withdrawn and your project and third-parties will be event-driven.
 * Easy utility functions: for creating consent, generating unsubscribe links etc.
 * Form mixins: Create your own forms with consent description and checkbox
 * Abuse-resistent: Uses unique URLs and `django-ratelimit <https://django-ratelimit.readthedocs.io/en/stable/>`__.
-* Denial of Service: Endpoints do not store for instance infinite amounts of
-  opt-outs.
-* Email confirmation: Signing up people via email requires to have the email
-  confirmed.
-* Email receipts: Informed consent can only exist meaningfully if both parties have a copy
-* Auditability: Actions are tracked
+* Denial of Service: Endpoints do not store for instance infinite amounts of opt-outs.
+* Email confirmation: Signing up people via email requires to have the email confirmed.
+* Email receipts: Informed consent can only exist meaningfully if both parties have a copy.
+* Auditability: Actions are tracked.
 
 
 Open design questions
