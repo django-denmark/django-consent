@@ -40,7 +40,7 @@ Motivational pitch ✊️
 What is this?
 -------------
 
-* An app for Django - ``pip install django-consent``
+* An app for `Django <https://www.djangoproject.com/>`__ projects - ``pip install django-consent``
 * Free software: GNU General Public License v3
 * Privacy by Design
 * Privacy by Default
@@ -50,8 +50,10 @@ What is this?
 What is this NOT?
 -----------------
 
-Do you want to collect consent based on a cookie or an IP? This is ridiculous and not what this app is about.
-If you are tracking your users before they are even logged in, please don't. We want to obtain consent from an authenticated user that has motivation to user the website and will have an ability to withdraw their consent and audit any actions that it has been used for.
+Do you want to collect consent based on a cookie or an IP? This is not what this app is about.
+If you are tracking your users before they are even logged in, please don't. We want to obtain consent from an authenticated user that has motivation to make an informed decision about their consent and will have an ability to withdraw their consent and audit any actions that it has been used for.
+
+*But but but I really want to track all users and my boss says that I have to!** There are other ways to gather statistics and analytics than tracking your users. Have a look at projects like goaccess and Plausible.
 
 Features
 --------
@@ -67,6 +69,59 @@ Features
 * Email receipts: Informed consent can only exist meaningfully if both parties have a copy.
 * Auditability: Actions are tracked.
 
+How does it work?
+-----------------
+
+To understand this section, you need to know how `data models in Django <https://docs.djangoproject.com/en/5.0/topics/db/models/>`__ work. But here is a simple example:
+
+.. code-block:: python
+    from django.contrib.auth.models import AbstractBaseUser
+    from django.contrib.auth.models import PermissionsMixin
+    from django.db import models
+
+    from django_consent.fields import ConsentField
+    from django_consent.fields import LEGITIMATE_INTEREST
+    from django_consent.fields import CONSENT
+    from django_consent.fields import SET_FALSE
+
+    from myapp.consent import consent_agreements
+
+
+    class User(PermissionsMixin, AbstractBaseUser):
+
+        EMAIL_FIELD = "email"
+        USERNAME_FIELD = "email"
+        email = models.EmailField(
+            unique=True,
+            verbose_name=_("email"),
+            help_text=_(
+                "Email address is used for password resets and notifications from the service."
+            ),
+        )
+
+        registration_consent = ConsentField(
+            agreement=consent_agreements["user_registration"],
+            legal_basis=LEGITIMATE_INTEREST,
+            fields=("first_name", "last_name", "email"),
+            default=True,
+        )
+
+        newsletter_consent = ConsentField(
+            agreement=consent_agreements["user_newsletter"],
+            legal_basis=CONSENT,
+            fields=("first_name", "last_name", "email"),
+            default=False,
+            on_revoke=SET_FALSE,
+        )
+
+
+Above, we see a model ``User`` that could be found in any Django project: It inherits the general user models and uses a unique email field as the username. We then define two types of consent for our users:
+
+* A legitimate interest or implied consent for the user registration: In this case, we aren't going to ask the user since signing up for the website can be enough to know that we need these details and this agreement only covers our own internal uses. This consent agreement isn't legally enough for us to share data or send newsletters. But it may be enough to send password reminders and critical notifications about the offered service (and that's critical as in *critical*, not marketing).
+
+* Our next consent field is one that cannot be assumed
+
+There are a couple of checks in place here: For instance, we are not allowed to specify ``default=True`` combined with ``legal_basis=CONSENT``. We also have a consent agreement definition that cannot later be revisioned in a way that doesn't match the consent fields that it is used for.
 
 Open design questions
 ---------------------
@@ -106,6 +161,10 @@ misunderstandings and openness about decisions, refer to the following.
   consent and telling users that "by continuing to use this service, you consent
   to the below thousand lines of legal lingo that you don't have time to read".
 
+* **Multiple jurisdictions?** It would seem like a complex layer to add,
+  in which the worry is if using consent the right way becomes less accessible.
+  For the purpose of having simple and intuitive understandings between owners of a service (data controllers) and their users,
+  we assume that it's better to write consent agreements and privacy policies that are compliant in all jurisdictions.
 
 Issues are welcomed with the tag ``question`` to verify, challenge elaborate or
 add to this list.
