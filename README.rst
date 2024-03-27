@@ -72,16 +72,16 @@ Features
 How does it work?
 -----------------
 
-To understand this section, you need to know how `data models in Django <https://docs.djangoproject.com/en/5.0/topics/db/models/>`__ work. But here is a simple example:
+To understand this section, you need to know how `data models in Django <https://docs.djangoproject.com/en/5.0/topics/db/models/>`__ work. But here is a simple example (it will be simplified later on):
 
 .. code-block:: python
     from django.contrib.auth.models import AbstractBaseUser
     from django.contrib.auth.models import PermissionsMixin
     from django.db import models
 
+    from django_consent.constants import LEGITIMATE_INTEREST
+    from django_consent.constants import CONSENT
     from django_consent.fields import ConsentField
-    from django_consent.fields import LEGITIMATE_INTEREST
-    from django_consent.fields import CONSENT
     from django_consent.fields import SET_FALSE
 
     from myapp.consent import consent_agreements
@@ -117,11 +117,41 @@ To understand this section, you need to know how `data models in Django <https:/
 
 Above, we see a model ``User`` that could be found in any Django project: It inherits the general user models and uses a unique email field as the username. We then define two types of consent for our users:
 
-* A legitimate interest or implied consent for the user registration: In this case, we aren't going to ask the user since signing up for the website can be enough to know that we need these details and this agreement only covers our own internal uses. This consent agreement isn't legally enough for us to share data or send newsletters. But it may be enough to send password reminders and critical notifications about the offered service (and that's critical as in *critical*, not marketing).
+* A legitimate interest (``legal_basis=LEGITIMATE_INTEREST``) or implied consent for the user registration: In this case, we aren't going to ask the user since signing up for the website can be enough to know that we need these details and this agreement only covers our own internal uses. This consent agreement isn't legally enough for us to share data or send newsletters. But it may be enough to send password reminders and critical notifications about the offered service (and that's critical as in *critical*, not marketing).
 
-* Our next consent field is one that cannot be assumed
+* Our next consent field is one that cannot be implied, as a newsletter needs a voluntary consent from the user or *opt in* (``legal_basis=CONSENT``).
 
 There are a couple of checks in place here: For instance, we are not allowed to specify ``default=True`` combined with ``legal_basis=CONSENT``. We also have a consent agreement definition that cannot later be revisioned in a way that doesn't match the consent fields that it is used for.
+
+Both ``ConsentField`` instances refer to the ``consent_agreements``, which are defined in the Django app's module ``consent``.
+This forces the developer to initiate the existence of consent in the code.
+It does not mean that the developer has to define legal texts, but it recognizes the need for consent guardrails to be implemented in the software itself.
+
+Consent Agreements are defined as code in the ``<myapp>.consent`` module (ie. each Django application that uses consent is expected by convention to declare a ``consent`` module:
+
+.. code-block:: python
+
+    from django_consent
+    from django_consent.agreements import ConsentAgreement
+    from django_consent.agreements import registry
+    from django_consent.constants import LEGITIMATE_INTEREST
+    from django_consent.constants import CONSENT
+
+    consent_agreements = registry.create("myapp")
+
+    @consent_agreements.add("user_registration")
+    class UserRegistration(ConsentAgreement):
+        revision = "0.1"
+        title = _("Developer's draft - please update")
+        purpose = _("Registering a user")
+        legal_basis = LEGITIMATE_INTEREST
+
+
+The Consent Agreement needs to be revisioned: If the database is blank, we can initiate it with the defined code.
+If the code is changed, a new revision will be added.
+
+But more likely, the developer should not be interested in making changes and instead leave the rest of the revisioning to the data controller.
+
 
 Open design questions
 ---------------------
