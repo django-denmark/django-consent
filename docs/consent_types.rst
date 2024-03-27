@@ -12,29 +12,28 @@ Consent has the following basic factors:
 
 .. glossary::
 
-    Consent Source
-      The "Source" or the "origin" of consent can be from a direct form input or from an indirect action.
+    Policy
+      All your data is subject of a privacy policy. As much as possible, make this short and sweet and in the user's best interest. NOT to cover your own ass. You want to have 1 singular policy and avoid updates to the policy. Don't be like AirBnB.
 
-    Consent
-      A specfic user consents to something specific expressed in a |Consent Source|
+    Purpose
+      When you collect data, you do it with a purpose. Some purpose is obvious and may not even require explicit consent (legitimate interest). And other purposes might be very critical for the user to understand. Make sure to always note the purpose, as it's likely part of your legal obligation. Data should not be collected, much less shared, without having defined and shared the purpose with your user.
 
-    Direct Consent Source
-      A Source can be direct and specific: "Receive a newsletter every month".
+    Consent Agreement
+      For every purpose, you need an Agreement to collect data. If you share the data, this is even more important (mandatory).
+      An Agreement is generic, it's the same Agreement that you present to every user that you need consent from.
 
-    Indirect Consent Source
-      A Source can also be indirect: "As a member of an organization, we need to inform you about changes in our statutes, invite you to meetings etc."
-      Often these are known as "legitimate interest".
+    Consent Record
+      Consent is obtained through a Consent Record. This records that the user has given their consent to a specific Agreement. The user may withdraw the consent again, in which case the Consent Record would be stored on top of a previous Consent Record to explicitly display the opt-out action.
+
+    Legitimate interest
+      You might have heard of legitimate interest. There are many things that you're allowed to do without obtaining explicit consent. But it's a good idea to prepare a Consent Agreement anyways and store a Consent Record to express that this was indeed the case.
 
 
 Consent Source examples
 -----------------------
 
-A source of consent is a repeatable type of consent. Consider these examples:
-
-* User signs up as a member of a website/organization :term:`Consent Source`
-* User signs up for a specific newsletter :term:`Consent`
-
-A direct source can most likely be enabled and disabled directly on the website, while indirect sources are often derived from something else.
+.. * User signs up as a member of a website/organization :term:`Consent Source`
+.. * User signs up for a specific newsletter :term:`Consent`
 
 
 Users can manage consent
@@ -48,21 +47,3 @@ Storing changes to consent
 --------------------------
 
 You might be looking for one of the following two types of changes:
-
-* User changes their :term:`Consent` to a specific :term:`Consent Source` - gives or withdraws.
-* You change the :term:`Consent Source` - **you cannot do that**.
-
-So the possibilities are actually quite limited. We can log when users give and
-withdraw consent to document what has happened.
-
-But under no circumstances should we change anything or add anything to a
-Consent Source. We can of course fix a typo. But consent becomes meaningless if
-we modify it after it's given.
-
-
-Refactoring consent
--------------------
-
-If users have given consent and then the Consent is attached to a
-:term:`Consent Source` instance, then the source can often be broken down and
-replaced by simpler instances of :term:`Direct Consent Source`.
