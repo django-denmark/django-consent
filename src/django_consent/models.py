@@ -14,6 +14,44 @@ from . import settings as consent_settings
 from . import utils
 
 
+class Policy(models.Model):
+    """
+    A policy is a global object.
+
+    Typically, you have just one "privacy policy" for an entire website.
+    It states HOW you treat data, for instance your jurisdiction.
+
+    You can keep this short and sweet, provided that you follow the law.
+    """
+
+    name = models.CharField(max_length=255)
+    version = models.CharField(max_length=255, default="1.0")
+    policy = models.TextField()
+
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+
+
+class Agreement(models.Model):
+    """
+    A Consent agreement acts like a template for users to consent to.
+
+    All agreements need a purpose and should express what kind of consent is applied.
+
+    For instance, an agreement may use "legitimate interest" (or implied consent) in order to simply track the legal
+    basis on which data is collected and used.
+    """
+
+    policy = models.ForeignKey(Policy, on_delete=models.PROTECT)
+
+    name = models.CharField(max_length=255)
+    version = models.CharField(max_length=255, default="1.0")
+    agreement = models.TextField()
+
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+
+
 class ConsentSource(models.Model):
     """
     A consent source always has to be present when adding email addresses. It
@@ -55,7 +93,7 @@ class ConsentSource(models.Model):
         Returns all current consent (that have not opted out)
         """
         return (
-            UserConsent.objects.filter(source=self)
+            ConsentRecord.objects.filter(source=self)
             .exclude(user__email_optouts__is_everything=True)
             .exclude(optouts__user=F("user"))
             .exclude(optouts__email_hash=F("email_hash"))
@@ -120,7 +158,7 @@ class ConsentSourceTranslation(models.Model):
         return "{} ({})".format(self.consent_source.source_name, self.language_code)
 
 
-class UserConsent(models.Model):
+class ConsentRecord(models.Model):
     """
     Specifies the consent of a user to receive emails and what source the
     consent originated from.
@@ -169,7 +207,7 @@ class UserConsent(models.Model):
         consent.
         """
         User = get_user_model()
-        # Field values for creating the new UserConsent object
+        # Field values for creating the new ConsentRecord object
         consent_create_kwargs = {
             "email_confirmed": not require_confirmation,
         }
@@ -288,7 +326,7 @@ class EmailOptOut(models.Model):
         on_delete=models.SET_NULL,
     )
     consent = models.ForeignKey(
-        "UserConsent",
+        "ConsentRecord",
         blank=True,
         null=True,
         related_name="optouts",
