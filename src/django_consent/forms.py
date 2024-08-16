@@ -32,10 +32,10 @@ class EmailConsentForm(forms.ModelForm):
     def save(self, commit=True):
         if not commit:
             raise RuntimeError("Not supported")
-        return models.UserConsent.capture_email_consent(
+        return models.ConsentRecord.capture_email_consent(
             self.consent_source, self.cleaned_data["email"], require_confirmation=True
         )
 
     class Meta:
-        model = models.UserConsent
+        model = models.ConsentRecord
         fields = []

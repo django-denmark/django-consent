@@ -5,7 +5,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView
-from ratelimit.decorators import ratelimit
+from django_ratelimit.decorators import ratelimit
 
 from . import forms
 from . import models
@@ -24,7 +24,7 @@ class ConsentCreateView(CreateView):
         path("signup/<int:source_id>/", SignupView.as_view()),
     """
 
-    model = models.UserConsent
+    model = models.ConsentRecord
     form_class = forms.EmailConsentForm
     template_name = "consent/user/create.html"
 
@@ -61,14 +61,14 @@ class ConsentCreateView(CreateView):
         )
 
 
-class UserConsentActionView(DetailView):
+class ConsentRecordActionView(DetailView):
     """
     An abstract view
 
     Validates that a token is valid for consent ID + email_hash
     """
 
-    model = models.UserConsent
+    model = models.ConsentRecord
     context_object_name = "consent"
     token_salt = consent_settings.UNSUBSCRIBE_SALT
 
@@ -95,7 +95,7 @@ class UserConsentActionView(DetailView):
         return c
 
 
-class ConsentWithdrawView(UserConsentActionView):
+class ConsentWithdrawView(ConsentRecordActionView):
     """
     Withdraws a consent. In the case of a newsletter, it unsubscribes a user
     from receiving the newsletter.
@@ -104,7 +104,7 @@ class ConsentWithdrawView(UserConsentActionView):
     """
 
     template_name = "consent/user/unsubscribe/done.html"
-    model = models.UserConsent
+    model = models.ConsentRecord
     context_object_name = "consent"
     token_salt = consent_settings.UNSUBSCRIBE_SALT
 
@@ -112,7 +112,7 @@ class ConsentWithdrawView(UserConsentActionView):
         consent.optout()
 
 
-class ConsentWithdrawUndoView(UserConsentActionView):
+class ConsentWithdrawUndoView(ConsentRecordActionView):
     """
     This is related to undoing withdrawal of consent in case that the user
     clicked the wrong link.
@@ -127,7 +127,7 @@ class ConsentWithdrawUndoView(UserConsentActionView):
         consent.optouts.all().delete()
 
 
-class ConsentWithdrawAllView(UserConsentActionView):
+class ConsentWithdrawAllView(ConsentRecordActionView):
     """
     Withdraws a consent. In the case of a newsletter, it unsubscribes a user
     from receiving the newsletter.
@@ -136,7 +136,7 @@ class ConsentWithdrawAllView(UserConsentActionView):
     """
 
     template_name = "consent/user/unsubscribe_all/done.html"
-    model = models.UserConsent
+    model = models.ConsentRecord
     context_object_name = "consent"
     token_salt = consent_settings.UNSUBSCRIBE_ALL_SALT
 
@@ -144,7 +144,7 @@ class ConsentWithdrawAllView(UserConsentActionView):
         consent.optout(is_everything=True)
 
 
-class ConsentWithdrawAllUndoView(UserConsentActionView):
+class ConsentWithdrawAllUndoView(ConsentRecordActionView):
     """
     This is related to undoing withdrawal of consent in case that the user
     clicked the wrong link.
@@ -162,7 +162,7 @@ class ConsentWithdrawAllUndoView(UserConsentActionView):
         consent.optouts.filter(is_everything=True).delete()
 
 
-class ConsentConfirmationReceiveView(UserConsentActionView):
+class ConsentConfirmationReceiveView(ConsentRecordActionView):
     """
     Marks a consent as confirmed, this is important for items that require a
     confirmed email address.

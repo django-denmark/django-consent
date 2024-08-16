@@ -16,9 +16,11 @@ django-consent
 
 *Manages consent from the user's perspective and with GDPR in mind*
 
-**October 2023:** There are still some incomin architectural changes in the `Consent Building Block <https://govstack.gitbook.io/bb-consent/>`__ 1.1 that we are waiting for.
+**March 2024:** I'm (@benjaoming) starting work to rewrite everything that existed here based on a more fundamental understanding of a consent model and lifecycle that we have discussed and developed in `GovStack <https://govstack.gitbook.io/bb-consent/>`__.
 
-**September 2023:** If you're interested in the politics, of consent, you might be interested in reading `The Left Needs To Stop Idolizing The GDPR <https://www.malteengeler.de/2023/09/14/the-left-needs-to-stop-idolizing-the-gdpr/>`__.
+**October 2023:** There is a new release of the `GovStack Consent Building Block <https://govstack.gitbook.io/bb-consent/>`__ 1.1.
+
+**September 2023:** If you're interested in the politics, of consent, you might be interested in reading [The Left Needs To Stop Idolizing The GDPR](https://www.malteengeler.de/2023/09/14/the-left-needs-to-stop-idolizing-the-gdpr/).
 
 **August 2023:** Matrix channel added: `#django-consent:data.coop <https://matrix.to/#/#django-consent:data.coop>`__
 
@@ -26,44 +28,129 @@ django-consent
 
 **October 2021:** @benjaoming has joined `GovStack <https://www.govstack.global/>`__'s `working group on Consent Management <https://discourse.govstack.global/t/consent-management/21>`__.
 
-**Currently** (or conventionally), organizations and developers imagine how to handle data
-from the organization's or the developer's perspective. Through quantity-driven and often
-needlessly greedy data collection and useless UIs, we end up with solutions to
-convince/manipulate/coerce users to consent to using their data. The user's consent is
-viewed as a legally required obstacle that's supposed to be clicked away and not actually
-understood. This isn't what consent should mean.
+Motivational pitch ✊️
+---------------------
 
-We need different models and solutions.
+**Currently** (or conventionally), organizations and developers imagine how to handle data from the organization's or the developer's perspective. Through quantity-driven and often needlessly greedy data collection and `deceptive UX <https://www.deceptive.design/>`__, we end up with solutions to convince/manipulate/coerce users to consent to using their data. The user's consent is viewed as a legally required obstacle that's supposed to be clicked away and not actually understood. This isn't what consent should mean.
 
-**Ideally**, we should step back from our immediate short-term development issues
-and imagine how **we** would want **our own** data to be handled. By assuming the real
-user's perspective, we can identify better models and solutions for *consent management*
-where the *management* part is seen as the user's ability to manage their own consent.
+**We need different models and solutions.**
+
+**Ideally**, we should step back from our immediate short-term development issues and imagine how **we** would want **our own** data to be handled. By assuming the real user's perspective, we can identify better models and solutions for *consent management* where the *management* part is seen as the user's ability to manage their own consent.
 
 What is this?
 -------------
 
-* An app for Django - ``pip install django-consent``
+* An app for `Django <https://www.djangoproject.com/>`__ projects - ``pip install django-consent``
 * Free software: GNU General Public License v3
 * Privacy by Design
 * Privacy by Default
 * Use-case: Consent-driven communication
+* Easy inclusion other Django models and views
 
+What is this NOT?
+-----------------
+
+Do you want to collect consent based on a cookie or an IP? This is not what this app is about.
+If you are tracking your users before they are even logged in, please don't. We want to obtain consent from an authenticated user that has motivation to make an informed decision about their consent and will have an ability to withdraw their consent and audit any actions that it has been used for.
+
+*But but but I really want to track all users and my boss says that I have to!** There are other ways to gather statistics and analytics than tracking your users. Have a look at projects like goaccess and Plausible.
 
 Features
 --------
 
 * Models: GDPR-friendly, supporting deletion and anonymization
 * Views: For managing withdrawal of consent from email links
+* Signals and webhooks: Consent can be given and withdrawn and your project and third-parties will be event-driven.
 * Easy utility functions: for creating consent, generating unsubscribe links etc.
 * Form mixins: Create your own forms with consent description and checkbox
 * Abuse-resistent: Uses unique URLs and `django-ratelimit <https://django-ratelimit.readthedocs.io/en/stable/>`__.
-* Denial of Service: Endpoints do not store for instance infinite amounts of
-  opt-outs.
-* Email confirmation: Signing up people via email requires to have the email
-  confirmed.
-* Email receipts: Informed consent can only exist meaningfully if both parties have a copy
-* Auditability: Actions are tracked
+* Denial of Service: Endpoints do not store for instance infinite amounts of opt-outs.
+* Email confirmation: Signing up people via email requires to have the email confirmed.
+* Email receipts: Informed consent can only exist meaningfully if both parties have a copy.
+* Auditability: Actions are tracked.
+
+How does it work?
+-----------------
+
+To understand this section, you need to know how `data models in Django <https://docs.djangoproject.com/en/5.0/topics/db/models/>`__ work. But here is a simple example (it will be simplified later on):
+
+.. code-block:: python
+    from django.contrib.auth.models import AbstractBaseUser
+    from django.contrib.auth.models import PermissionsMixin
+    from django.db import models
+
+    from django_consent.constants import LEGITIMATE_INTEREST
+    from django_consent.constants import CONSENT
+    from django_consent.fields import ConsentField
+    from django_consent.fields import SET_FALSE
+
+    from myapp.consent import consent_agreements
+
+
+    class User(PermissionsMixin, AbstractBaseUser):
+
+        EMAIL_FIELD = "email"
+        USERNAME_FIELD = "email"
+        email = models.EmailField(
+            unique=True,
+            verbose_name=_("email"),
+            help_text=_(
+                "Email address is used for password resets and notifications from the service."
+            ),
+        )
+
+        registration_consent = ConsentField(
+            agreement=consent_agreements["user_registration"],
+            legal_basis=LEGITIMATE_INTEREST,
+            fields=("first_name", "last_name", "email"),
+            default=True,
+        )
+
+        newsletter_consent = ConsentField(
+            agreement=consent_agreements["user_newsletter"],
+            legal_basis=CONSENT,
+            fields=("first_name", "last_name", "email"),
+            default=False,
+            on_revoke=SET_FALSE,
+        )
+
+
+Above, we see a model ``User`` that could be found in any Django project: It inherits the general user models and uses a unique email field as the username. We then define two types of consent for our users:
+
+* A legitimate interest (``legal_basis=LEGITIMATE_INTEREST``) or implied consent for the user registration: In this case, we aren't going to ask the user since signing up for the website can be enough to know that we need these details and this agreement only covers our own internal uses. This consent agreement isn't legally enough for us to share data or send newsletters. But it may be enough to send password reminders and critical notifications about the offered service (and that's critical as in *critical*, not marketing).
+
+* Our next consent field is one that cannot be implied, as a newsletter needs a voluntary consent from the user or *opt in* (``legal_basis=CONSENT``).
+
+There are a couple of checks in place here: For instance, we are not allowed to specify ``default=True`` combined with ``legal_basis=CONSENT``. We also have a consent agreement definition that cannot later be revisioned in a way that doesn't match the consent fields that it is used for.
+
+Both ``ConsentField`` instances refer to the ``consent_agreements``, which are defined in the Django app's module ``consent``.
+This forces the developer to initiate the existence of consent in the code.
+It does not mean that the developer has to define legal texts, but it recognizes the need for consent guardrails to be implemented in the software itself.
+
+Consent Agreements are defined as code in the ``<myapp>.consent`` module (ie. each Django application that uses consent is expected by convention to declare a ``consent`` module:
+
+.. code-block:: python
+
+    from django_consent
+    from django_consent.agreements import ConsentAgreement
+    from django_consent.agreements import registry
+    from django_consent.constants import LEGITIMATE_INTEREST
+    from django_consent.constants import CONSENT
+
+    consent_agreements = registry.create("myapp")
+
+    @consent_agreements.add("user_registration")
+    class UserRegistration(ConsentAgreement):
+        revision = "0.1"
+        title = _("Developer's draft - please update")
+        purpose = _("Registering a user")
+        legal_basis = LEGITIMATE_INTEREST
+
+
+The Consent Agreement needs to be revisioned: If the database is blank, we can initiate it with the defined code.
+If the code is changed, a new revision will be added.
+
+But more likely, the developer should not be interested in making changes and instead leave the rest of the revisioning to the data controller.
 
 
 Open design questions
@@ -104,6 +191,10 @@ misunderstandings and openness about decisions, refer to the following.
   consent and telling users that "by continuing to use this service, you consent
   to the below thousand lines of legal lingo that you don't have time to read".
 
+* **Multiple jurisdictions?** It would seem like a complex layer to add,
+  in which the worry is if using consent the right way becomes less accessible.
+  For the purpose of having simple and intuitive understandings between owners of a service (data controllers) and their users,
+  we assume that it's better to write consent agreements and privacy policies that are compliant in all jurisdictions.
 
 Issues are welcomed with the tag ``question`` to verify, challenge elaborate or
 add to this list.
