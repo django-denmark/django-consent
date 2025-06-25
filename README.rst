@@ -1,6 +1,8 @@
 django-consent
 ==============
 
+(unfinished WIP, not for use yet)
+
 .. image:: https://img.shields.io/pypi/v/django_consent.svg
      :target: https://pypi.python.org/pypi/django_consent
 
@@ -15,6 +17,8 @@ django-consent
      :alt: Documentation Status
 
 *Manages consent from the user's perspective and with GDPR in mind*
+
+**June 2025:** This project is currently in hiatus, pending an update to its codebase to align with GovStack's Consent specification and introduce new a Developer-oriented set of tools for handling consent in Django models.
 
 **October 2023:** There are still some incomin architectural changes in the `Consent Building Block <https://govstack.gitbook.io/bb-consent/>`__ 1.1 that we are waiting for.
 
